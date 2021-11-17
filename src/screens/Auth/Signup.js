@@ -12,13 +12,14 @@ import {
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { BASE_URL } from "../../helpers/constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { addFile, setStorageClass } from "../../store/actions/fileActions";
 import { connect } from "react-redux";
 
 const Signup = ({ navigation }) => {
-  const [username, setUserName] = React.useState("ahsanihsan");
-  const [password, setPassword] = React.useState("ahsan11343");
-  const [email, setEmail] = React.useState("ahsan.ihsan@outlook.com");
+  const [username, setUserName] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
 
@@ -32,10 +33,12 @@ const Signup = ({ navigation }) => {
           email,
         })
         .then(async (response) => {
-          await AsyncStorage.setItem("user", response.data.token);
+          await AsyncStorage.setItem("token", response.data.token);
           setSubmitting(false);
+          navigation.navigate("Main");
         })
         .catch((error) => {
+          console.log(error);
           if (error && error.response) {
             Alert.alert("Error", error.response.data.msg);
             setSubmitting(false);

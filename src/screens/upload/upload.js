@@ -57,7 +57,7 @@ function UploadScreen(props) {
     }
   };
   const uploadAllFilesInQueue = async () => {
-    const token = await AsyncStorage.getItem("user");
+    const token = await AsyncStorage.getItem("token");
     if (props.files.length > 0) {
       setUploading(true);
       let responses = await Promise.all(

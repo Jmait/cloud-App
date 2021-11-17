@@ -12,39 +12,31 @@ import {
 import { connect } from "react-redux";
 
 import { Ionicons } from "@expo/vector-icons";
-import axios from "axios";
-import { BASE_URL } from "../../helpers/constants";
+import { apiRequest, BASE_URL } from "../../helpers/constants";
 import { addFile, setStorageClass } from "../../store/actions/fileActions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({ navigation }) => {
-  const [username, setUserName] = React.useState("ahsanihsan");
-  const [password, setPassword] = React.useState("ahsan11343");
+  const [username, setUserName] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
 
-  const handleLoginSubmit = () => {
-    navigation.navigate("Main");
-    // setSubmitting(true);
-    // axios
-    //   .post(BASE_URL + "auth/signin", {
-    //     username,
-    //     password,
-    //   })
-    //   .then(async (response) => {
-    //     await AsyncStorage.setItem("user", response.data.token);
-    //     setSubmitting(false);
-    //   })
-    //   .catch((error) => {
-    //     if (error && error.response) {
-    //       Alert.alert("Error", error.response.data.msg);
-    //       setSubmitting(false);
-    //     } else {
-    //       Alert.alert(
-    //         "Error",
-    //         "There is a problem in requesting data, please try again later."
-    //       );
-    //       setSubmitting(false);
-    //     }
-    //   });
+  const handleLoginSubmit = async() => {
+      setSubmitting(true);
+    try {
+      const res = await apiRequest({method:"POST", url:`${BASE_URL}auth/signin`, body:{username,password}});
+      if(res){
+        const {token} = res.data;
+        await AsyncStorage.setItem("token",token);
+        navigation.navigate("Main");
+        setSubmitting(false);
+      }
+    } catch (error) {
+      // console.log(error);
+      Alert.alert(error.response.data.msg);
+      setSubmitting(false);
+    }
+    //Make a network request to login endpoint
   };
 
   return (

@@ -7,15 +7,57 @@ import {
   StyleSheet,
   StatusBar,
   ScrollView,
+  ActivityIndicator,
   Switch,
   Dimensions,
+  Alert,
 } from "react-native";
 import styled from "styled-components";
 const Height = Dimensions.get("screen").height;
 import { Fontisto, MaterialIcons } from "@expo/vector-icons";
 import { connect } from "react-redux";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASE_URL, apiRequest } from "../../helpers/constants";
 function ProfileScreen({ navigation, theme, darkMode }) {
+
+  const [email, setEmail] = React.useState("");
+  const [submitting, setSubmitting] =React.useState(false)
+  const [deleteLoading , setDelete]= React.useState(false);
+  const deleteProfile=async()=>{
+     setDelete(true);
+    try {
+    const  token = await AsyncStorage.getItem("token");
+   const res=  await apiRequest({method:"DELETE",url:`${BASE_URL}auth/delete-user`, Authorization:`Bearer ${token}`,body:{email}});
+   if(res){
+    return navigation.navigate("Intro")
+   }
+  }catch (error) {
+    console.log(error);
+    setDelete(false)
+    Alert.alert("An error occured when making your request");
+    }
+  }
+
+  const updateEmail=async()=>{
+    setSubmitting(true)
+    try {
+      const token = await AsyncStorage.getItem("token");
+        const response = await apiRequest({method:"PUT",url:`${BASE_URL}auth/update-user`, Authorization:`Bearer ${token}`,body:{email}});
+        if(response){
+          Alert.alert(response.data.msg)
+          setSubmitting(false)
+        }
+      } catch (error) {
+        setSubmitting(false)
+        Alert.alert(error.response.data.msg)
+      }
+  }
+
+  const  signOut=async()=>{
+    const clearToken = await AsyncStorage.removeItem("token")
+    if(!clearToken) return navigation.navigate("Intro")
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar />
@@ -52,6 +94,7 @@ function ProfileScreen({ navigation, theme, darkMode }) {
                 placeholderTextColor="lightgrey"
                 style={styles.input}
                 placeholder="Enter your new email..."
+                onChangeText={(text) => setEmail(text)}
               />
               <Text style={styles.inputTitle}>Confirm Email</Text>
               <TextInput
@@ -67,16 +110,29 @@ function ProfileScreen({ navigation, theme, darkMode }) {
                 placeholder="Enter your master password..."
                 secureTextEntry={true}
               />
-
-              <UpdateButton onPress={() => {}} activeOpacity={0.7}>
-                <Text style={styles.updateText}>Update</Text>
-              </UpdateButton>
-
+              {
+                 <UpdateButton
+                 onPress={() => {
+                   updateEmail()
+                 }}
+                 style={[styles.btn, { backgroundColor: "#FF2465" }]}
+                 activeOpacity={0.6}
+               >
+                 {submitting ? (
+                   <ActivityIndicator color="white" size={20} />
+                 ) : (
+                   <Text style={styles.updateText}>Update</Text>
+                 )}
+               </UpdateButton>
+              
+}
               <ButtonRow>
-                <LogoutButton>
+                <LogoutButton onPress={async()=>{signOut()}}>
                   <Text style={styles.updateText}>Log out</Text>
                 </LogoutButton>
-                <AccountButton>
+                <AccountButton onPress={async () => {
+                  deleteProfile()
+                }}>
                   <Text style={styles.updateText}>Deactivate Account </Text>
                 </AccountButton>
               </ButtonRow>
