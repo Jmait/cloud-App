@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 const PreviewCard = (props) => {
   let { _handleAddTagPress, theme } = props;
-
+  const fileSize = props.size / 1048576;
   const [isEnabled, setIsEnabled] = React.useState(false);
   const getPreview = () => {
     const files = [".docx", ".doc"];
@@ -21,7 +21,7 @@ const PreviewCard = (props) => {
     if (new RegExp(files.join("|")).test(props.name)) {
       return <MaterialIcons name="archive" size={50} />;
     } else {
-      console.log(props.uri);
+  
       return (
         <View>
           <Image source={{ uri: props.uri }} style={styles.img} />
@@ -50,11 +50,11 @@ const PreviewCard = (props) => {
             </AddTag>
           </View>
         </View>
-
+      
         <View style={{ width: "20%" }}>
           <Text style={styles.text}>
             {props.size
-              ? Math.round(props.size / 1048576) + " Mb"
+              ? fileSize.toFixed(2) + " Mb"
               : props.height + " * " + props.width}
           </Text>
         </View>
@@ -71,8 +71,8 @@ const PreviewCard = (props) => {
             false: "grey",
             true: "#FF2465",
           }}
-          thumbColor={"black"}
-          value={true}
+          thumbColor={"white"}
+          value={isEnabled}
           ios_backgroundColor="#3e3e3e"
           onValueChange={setIsEnabled}
           disabled

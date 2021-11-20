@@ -45,28 +45,17 @@ function UploadedScreen({ route, navigation, darkMode }) {
   };
 
   React.useEffect(() => {
-    // timer = setInterval(() => {
-    //   setCounter((prevCount) => {
-    //     let minutes = Math.floor(prevCount / 60);
-    //     let seconds = prevCount - minutes * 60;
-    //     if (minutes >= 0 && seconds >= 0) {
-    //       setTime(`${minutes}:${seconds > 9 ? seconds : "0" + seconds}`);
-    //     } else {
-    //       navigation.goBack();
-    //     }
-    //     return prevCount - 1;
-    //   });
-    // }, 1000);
+  
     getFiles();
-    // return () => clearInterval(timer);
+   
   }, []);
 
   const getFiles = async () => {
-    const token = await AsyncStorage.getItem("user");
+    const token = await AsyncStorage.getItem("token");
     axios
       .get(BASE_URL + "data/files", {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {

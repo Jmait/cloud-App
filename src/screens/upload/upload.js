@@ -71,6 +71,7 @@ function UploadScreen(props) {
           if (new RegExp(filesNames.join("|")).test(file.uri)) {
             formData.append("file", file);
           } else {
+            
             formData.append("file", {
               uri: file.uri,
               type: "image/jpg",

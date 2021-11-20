@@ -27,6 +27,7 @@ function ProfileScreen({ navigation, theme, darkMode }) {
      setDelete(true);
     try {
     const  token = await AsyncStorage.getItem("token");
+    console.log(token);
    const res=  await apiRequest({method:"DELETE",url:`${BASE_URL}auth/delete-user`, Authorization:`Bearer ${token}`,body:{email}});
    if(res){
     return navigation.navigate("Intro")

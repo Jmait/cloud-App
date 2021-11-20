@@ -62,11 +62,11 @@ function UploadedScreen({ route, navigation, darkMode }) {
   }, []);
 
   const getFiles = async () => {
-    const token = await AsyncStorage.getItem("user");
+    const token = await AsyncStorage.getItem("token");
     axios
-      .get(BASE_URL + "data/files", {
+      .get(BASE_URL + "data/files/archieved", {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {

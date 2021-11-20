@@ -510,6 +510,7 @@ import {
   Dimensions,
   Image,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import styled from "styled-components";
 const Height = Dimensions.get("screen").height;
@@ -592,11 +593,11 @@ function UploadedScreen({ route, navigation, darkMode }) {
   }, []);
 
   const getFiles = async () => {
-    const token = await AsyncStorage.getItem("user");
+    const token = await AsyncStorage.getItem("token");
     axios
-      .get(BASE_URL + "data/files", {
+      .get(BASE_URL + "data/files/frequent", {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
@@ -604,7 +605,9 @@ function UploadedScreen({ route, navigation, darkMode }) {
           setUploadedFiles(response.data.frequent);
           setLoading(false);
         }
-      });
+      }).catch((err)=>{
+        Alert.alert(err.response.data.msg)
+      })
   };
 
   return (

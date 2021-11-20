@@ -220,9 +220,11 @@ function HomeScreen(props) {
             <TouchableOpacity
               activeOpacity={0.6}
               style={styles.button}
-              onPress={() =>
+              onPress={() =>{
+                console.log(info);
                 navigation.navigate(info.title, { name: info.key })
               }
+            }
             >
               <Text style={[styles.text, { color: theme.PRIMARY_TEXT_COLOR }]}>
                 Unlock Vault

@@ -17,8 +17,8 @@ import { addFile, setStorageClass } from "../../store/actions/fileActions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({ navigation }) => {
-  const [username, setUserName] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [username, setUserName] = React.useState("bolajimi");
+  const [password, setPassword] = React.useState("12345678");
   const [submitting, setSubmitting] = React.useState(false);
 
   const handleLoginSubmit = async() => {
@@ -32,7 +32,7 @@ const Login = ({ navigation }) => {
         setSubmitting(false);
       }
     } catch (error) {
-      // console.log(error);
+      /// console.log(error);
       Alert.alert(error.response.data.msg);
       setSubmitting(false);
     }

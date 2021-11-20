@@ -4,9 +4,11 @@ import {
   View,
   Text,
   StyleSheet,
+  RefreshControl,
   TouchableOpacity,
   Image,
   Dimensions,
+  Alert,
 } from "react-native";
 import {
   FontAwesome,
@@ -17,43 +19,72 @@ import {
 import { connect } from "react-redux";
 import ImageView from "react-native-image-viewing";
 import styled from "styled-components";
-
+import { apiRequest, BASE_URL } from "../../helpers/constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import RNFetchBlob from "rn-fetch-blob";// import RNFetchBlob from 'rn-fetch-blob'
 const Height = Dimensions.get("screen").height;
+// const {config}= RNFetchBlob
 
-const dummyData = [
-  {
-    name: "IMG_90.PNG",
-    tag: "#space",
-    type: "Image",
-    size: "295 KB",
-    path: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-  },
-  {
-    name: "Vid_21.MP4",
-    tag: "#tall",
-    type: "Video",
-    size: "1.2 GB",
-    path: "https://images.unsplash.com/photo-1573273787173-0eb81a833b34",
-  },
-  {
-    name: "Tax2021.pdf",
-    type: "Document",
-    size: "30 MB",
-    path: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-  },
-  {
-    name: "Songs.MP3",
-    tag: "#music",
-    type: "Music",
-    size: "2 MB",
-    path: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-  },
-];
+const downloadImageLocally = async(location)=>{
+  try {
+
+ console.log(RNFetchBlob);
+}catch(e){}
+
+}
+
 
 function DownloadScreen({ navigation, darkMode }) {
   const [view, setView] = React.useState(false);
   const [visible, setIsVisible] = useState(false);
   const [data, setData] = useState("");
+  const [download,setDownload]= useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+const fetchFile =async()=>{
+  try {
+    const token =await AsyncStorage.getItem("token");
+    const res = await apiRequest({method:'GET', url:`${BASE_URL}data/all-uploaded-files`, Authorization:`Bearer ${token}`})
+      if (res) {
+        setDownload(res.data.files)
+        setRefreshing(false)
+      }
+  } catch (error) {
+    setRefreshing(false)
+    Alert.alert(error.response.data.msg);
+  }
+}
+const onRefresh = React.useCallback(() => {
+  setRefreshing(true);
+ fetchFile()
+}, []);
+React.useEffect(() => {
+  
+  fetchFile();
+ 
+}, []);
+
+const RenameTag= async(id)=>{
+  try {
+    
+  } catch (error) {
+    
+  }
+}
+
+const deleteFile=async(id)=>{
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await apiRequest({method:'DELETE', url:`${BASE_URL}data/delete-file/${id}`, Authorization:`Bearer ${token}`, body:{}})
+    if(res){
+      Alert.alert(res.data.msg);
+    }
+  } catch (error) {
+    console.log(error);
+    Alert.alert(error.response.data.msg);
+  }
+}
+
   return (
     <Container style={{ backgroundColor: "#151515" }}>
       <View style={styles.body}>
@@ -79,7 +110,11 @@ function DownloadScreen({ navigation, darkMode }) {
         </View>
         <View style={[styles.line, { backgroundColor: "white" }]} />
 
-        <ScrollView>
+        <ScrollView refreshControl={<RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+}>
           <View style={styles.cardContainer}>
             {view ? (
               <View style={styles.list}>
@@ -134,8 +169,8 @@ function DownloadScreen({ navigation, darkMode }) {
                   </Text>
                 </View>
 
-                {dummyData &&
-                  dummyData.map((val, i) => {
+                {download &&
+                  download.map((val, i) => {
                     return (
                       <View key={i}>
                         <View style={styles.row}>
@@ -153,7 +188,7 @@ function DownloadScreen({ navigation, darkMode }) {
                                 { color: "white" },
                               ]}
                             >
-                              {val.name}
+                              {val.fileName}
                             </Text>
                           </TouchableOpacity>
 
@@ -185,10 +220,10 @@ function DownloadScreen({ navigation, darkMode }) {
                           )}
 
                           <Text style={[styles.title, { color: "white" }]}>
-                            {val.type}
+                            {val.fileType}
                           </Text>
                           <Text style={[styles.title, { color: "white" }]}>
-                            {val.size}
+                            {val.fileSize}
                           </Text>
                         </View>
 
@@ -205,8 +240,8 @@ function DownloadScreen({ navigation, darkMode }) {
               </View>
             ) : (
               <View style={styles.grid}>
-                {dummyData &&
-                  dummyData.map((val, i) => {
+                {download &&
+                  download.map((val, i) => {
                     return (
                       <View style={styles.gridCard} key={i}>
                         <TouchableOpacity
@@ -217,7 +252,7 @@ function DownloadScreen({ navigation, darkMode }) {
                         >
                           <Image
                             source={{
-                              uri: val.path,
+                              uri: val.location,
                             }}
                             style={{
                               width: "95%",
@@ -231,7 +266,7 @@ function DownloadScreen({ navigation, darkMode }) {
                               { color: "white", marginTop: 8 },
                             ]}
                           >
-                            {val.name}
+                            {val.fileName}
                           </Text>
                           {val.tag ? (
                             <Tag
@@ -269,7 +304,7 @@ function DownloadScreen({ navigation, darkMode }) {
           <ImageView
             images={[
               {
-                uri: data.path,
+                uri: data.location,
               },
             ]}
             backgroundColor="rgba(0,0,0,0.9)"
@@ -277,7 +312,7 @@ function DownloadScreen({ navigation, darkMode }) {
             visible={visible}
             FooterComponent={() => (
               <ImageViewFooter>
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity onPress={async()=>{downloadImageLocally(data.location)}} activeOpacity={0.7}>
                   <AntDesign name="download" size={24} color="#1D2026" />
                 </TouchableOpacity>
                 <Tag>
@@ -286,7 +321,7 @@ function DownloadScreen({ navigation, darkMode }) {
                   </Text>
                 </Tag>
                 <OptionIcon name="dots-three-horizontal" />
-                <TouchableOpacity activeOpacity={0.6}>
+                <TouchableOpacity onPress={async()=>{deleteFile(data.id)}} activeOpacity={0.6}>
                   <AntDesign name="delete" size={24} color="#1D2026" />
                 </TouchableOpacity>
               </ImageViewFooter>
