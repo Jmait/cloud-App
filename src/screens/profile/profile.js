@@ -128,11 +128,19 @@ function ProfileScreen({ navigation, theme, darkMode }) {
               
 }
               <ButtonRow>
-                <LogoutButton onPress={async()=>{signOut()}}>
+                <LogoutButton onPress={async()=>{Alert.alert("Are you sure?","You are about to sign out of the system.",[{text:"I know", onPress:async()=>{ signOut()}},{text:"Cancel",onPress:async()=>{}}],{
+                    cancelable: true,
+                    onDismiss: () =>{}
+                    
+                  },)}}>
                   <Text style={styles.updateText}>Log out</Text>
                 </LogoutButton>
                 <AccountButton onPress={async () => {
-                  deleteProfile()
+                  Alert.alert("Are you sure?","You are about to permanently delete your account.",[{text:"Delete", onPress:async()=>{ deleteProfile()}},{text:"Cancel",onPress:async()=>{}}],{
+                    cancelable: true,
+                    onDismiss: () =>{}
+                      
+                  },)
                 }}>
                   <Text style={styles.updateText}>Deactivate Account </Text>
                 </AccountButton>

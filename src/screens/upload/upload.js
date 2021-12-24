@@ -16,13 +16,9 @@ const Height = Dimensions.get("screen").height;
 import { connect } from "react-redux";
 import Modal from "react-native-modal";
 import { AntDesign, Entypo } from "@expo/vector-icons";
-import { Buffer } from "buffer"; // import buffer
-
 import PreviewCard from "../../components/upload/PreviewCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { BASE_URL } from "../../helpers/constants";
-import * as FileSystem from "expo-file-system";
+import { apiRequest, BASE_URL } from "../../helpers/constants";
 import { clearStore } from "../../store/actions/fileActions";
 import UploadCard from "../../components/uploadcard/uploadcard";
 
@@ -30,12 +26,13 @@ function UploadScreen(props) {
   const [active, setActive] = React.useState("Upload");
   const [showModal, setShowModal] = React.useState(false);
   const [uploading, setUploading] = React.useState(false);
+  const [tag, SetTag] = React.useState("");
   // const { name } = props.route.params;
   const [info, setInfo] = React.useState({
     key: "frequent",
     title: "Frequent",
   });
-
+// console.log(props.storageClass);
   const _handleAddTagPress = () => {
     setShowModal(true);
   };
@@ -56,46 +53,44 @@ function UploadScreen(props) {
         break;
     }
   };
+  
   const uploadAllFilesInQueue = async () => {
     const token = await AsyncStorage.getItem("token");
+    const client_secret = await AsyncStorage.getItem("secret");
     if (props.files.length > 0) {
-      setUploading(true);
-      let responses = await Promise.all(
-        props.files.map(async (file) => {
-          let formData = new FormData();
-          let data = {
-            userId: 1,
-            storageClass: getStorageClass(),
-          };
-          const filesNames = [".docx", ".doc"];
-          if (new RegExp(filesNames.join("|")).test(file.uri)) {
-            formData.append("file", file);
-          } else {
-            
-            formData.append("file", {
-              uri: file.uri,
-              type: "image/jpg",
-              name: "image.jpg",
-              originalname: "image.jpg",
-            });
-          }
-          formData.append("data", JSON.stringify(data));
-          return await fetch(BASE_URL + "data/upload-file", {
-            method: "post",
-            body: formData,
-            headers: {
-              Authorization: token,
-              "Content-Type": "multipart/form-data; ",
-            },
+     try {
+       setUploading(true);
+      props.files.map(async (file) => {
+        const  formData = new FormData();
+        const filesNames = [".docx", ".doc"];
+        if (new RegExp(filesNames.join("|")).test(file.uri)) {
+          formData.append("file", file);
+        } else {
+          
+          formData.append("file", {
+            uri: file.uri,
+            type: "image/jpg",
+            name: "image.jpg",
+            originalname: "image.jpg",
           });
-        })
-      );
-      if (responses && responses.length > 0) {
-        Alert.alert("All files that you selected have been uploaded");
-        props.clearStore();
-        props.navigation.goBack();
+        }
+        console.log(getStorageClass());
+        formData.append("tag", tag);
+        formData.append("client_secret", client_secret);
+        formData.append("storageClass",getStorageClass());
+      const res =   await apiRequest({method:"POST", body:formData, url:`${BASE_URL}data/upload-file`, Authorization:`Bearer ${token}`})
+      if (res.status==200) {
+        Alert.alert("Success", res.data.msg)
+        setUploading(false)
+      } else {
+        Alert.alert("Error", "File not successfully uploaded");
+        setUploading(false)
       }
-      setUploading(false);
+      })
+     } catch (error) {
+       Alert.alert("Error",error.message);
+       setUploading(false)
+     }
     } else {
       Alert.alert("Please select one or more file to continue");
     }
@@ -126,6 +121,7 @@ function UploadScreen(props) {
                 <PreviewCard
                   _handleAddTagPress={_handleAddTagPress}
                   theme={props.theme}
+                  tag= {tag}
                   name={item.name ? item.name : item.filename}
                   size={item.size}
                   height={item.height}
@@ -181,11 +177,7 @@ function UploadScreen(props) {
                 ]}
                 activeOpacity={0.7}
               >
-                {uploading ? (
-                  <ActivityIndicator />
-                ) : (
-                  <Text style={styles.modalLoginText}>Upload</Text>
-                )}
+               <Text style={styles.modalLoginText}>{uploading?"Please wait...":"Upload"}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -217,13 +209,14 @@ function UploadScreen(props) {
             </TouchableOpacity>
             <TextInput
               placeholder="Enter a new tag..."
+              onChangeText={(text)=>{SetTag(text)}}
               placeholderTextColor="white"
               style={styles.input}
             />
 
             <View style={styles.modalTagView}>
               <Tag>
-                <Text style={{ color: "white" }}>asdad</Text>
+                <Text style={{ color: "white" }}>{tag==""? "No tag":tag}</Text>
               </Tag>
 
               <View

@@ -18,7 +18,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.haven.havenapp",
+      "package": "com.haven.havenapps",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"

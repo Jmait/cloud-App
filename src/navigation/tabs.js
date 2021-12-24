@@ -36,7 +36,6 @@ import {
   Signup,
 } from "../screens";
 import Plus from "../screens/MainPlus/Plus";
-
 const TabBarHomeBtn = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
@@ -303,13 +302,13 @@ const AppStack = ({ theme, getInitialTheme }) => {
           }}
           component={Frequent}
         />
-        <Stack.Screen
-          name="Infrequent"
+        {/* <Stack.Screen
+          name="Infrequents"
           options={{
             headerShown: false,
           }}
           component={Infrequent}
-        />
+        /> */}
         <Stack.Screen
           name="Archived"
           options={{

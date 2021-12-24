@@ -11,8 +11,10 @@ import {
   Dimensions,
   Image,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import styled from "styled-components";
+import CountDown from 'react-native-countdown-component';
 const Height = Dimensions.get("screen").height;
 import {
   MaterialIcons,
@@ -26,26 +28,30 @@ import { connect } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { BASE_URL } from "../../helpers/constants";
-
+import { downloadImageLocally } from "./image-downloader";
+import Modal from "react-native-modal";
 function UploadedScreen({ route, navigation, darkMode }) {
   const [view, setView] = React.useState(false);
   const [visible, setIsVisible] = useState(false);
   const [data, setData] = useState("");
   const { name } = route.params;
-
-  const [timeUpdate, setTimeUpdate] = React.useState(false);
-  const [counter, setCounter] = React.useState(1800);
-  const [time, setTime] = React.useState("30:00");
+  const [renaming, setTagRenaming] = React.useState(false);
+  const [showModal, setShowModal]= React.useState(false);
+  const [timer, setTime] = React.useState(60 * 29 + 59);
   const [uploadedFiles, setUploadedFiles] = React.useState([]);
   const [isLoading, setLoading] = React.useState(true);
-  let timer;
+  const [resetId, setReset] = React.useState(0);
+  const [secret,setClientSecret] = React.useState('')
+  const [serverSecret, setServerSecret] = React.useState('');
+
+  
 
   const _handleResetPress = () => {
-    setCounter(1800);
+    setReset(Math.random())
   };
 
   React.useEffect(() => {
-  
+    getServerSecret();
     getFiles();
    
   }, []);
@@ -53,7 +59,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
   const getFiles = async () => {
     const token = await AsyncStorage.getItem("token");
     axios
-      .get(BASE_URL + "data/files", {
+      .get(BASE_URL + "data/files/infrequent", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -63,8 +69,46 @@ function UploadedScreen({ route, navigation, darkMode }) {
           setUploadedFiles(response.data.infrequent);
           setLoading(false);
         }
+      }).catch((err)=>{
+        Alert.alert("Error",err.response.data.msg)
       });
   };
+
+  const getServerSecret = async () => {
+    const token = await AsyncStorage.getItem("token");
+    const   client_secret =await  AsyncStorage.getItem("secret");
+    setClientSecret(client_secret);
+    axios
+      .get(BASE_URL + "data/server-secret", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response && response.data) {
+           setServerSecret(response.data.msg);
+        }
+      }).catch((err)=>{
+        Alert.alert("Error",err.response.data.msg)
+      })
+  };
+
+  const  RenameTag =async(file)=>{
+    try {
+      setTagRenaming(true);
+     const token =await AsyncStorage.getItem("token");
+       const  response = await apiRequest({method:"PUT", url:`${BASE_URL}data/rename-tag`,body:{id:file.id,tag}, Authorization:`Bearer ${token}`});
+       if(response){
+         setShowModal(false);
+         setTagRenaming(false);
+         Alert.alert("Success","Your file tag has been successfully updated.Please referesh the page")
+       }
+    } catch (error) {
+      setTagRenaming(false);
+      setShowModal(false);
+      Alert.alert("Error", error.message);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -83,12 +127,12 @@ function UploadedScreen({ route, navigation, darkMode }) {
             </TouchableOpacity>
 
             <Text style={[styles.title, { marginLeft: 50 }]}>
-              Infrequent Vault
+              Infrequent Vaults
             </Text>
           </Row>
 
           <Row style={{ justifyContent: "space-between" }}>
-            <LockTxt style={{ fontSize: 20 }}>27:41</LockTxt>
+          <LockTxt style={{ fontSize: 25 }}><CountDown  id={`${resetId}`} digitStyle={{backgroundColor: 'none'}} digitTxtStyle={{color: 'white'}}   until={timer} showSeparator={false}   timeLabels={{m: null, s: null}} timeToShow={['M', 'S']} onFinish={() => navigation.goBack()}/></LockTxt>
             <ResetButton onPress={() => _handleResetPress()}>
               <LockTxt>Reset</LockTxt>
             </ResetButton>
@@ -247,7 +291,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
                           >
                             <Image
                               source={{
-                                uri: val.location,
+                                uri:`${BASE_URL}data/image?key=${val.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
                               }}
                               style={{
                                 width: "100%",
@@ -286,14 +330,14 @@ function UploadedScreen({ route, navigation, darkMode }) {
               backgroundColor="rgba(0,0,0,0.4)"
               images={[
                 {
-                  uri: data.location,
+                  uri: `${BASE_URL}data/image?key=${data.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
                 },
               ]}
               imageIndex={0}
               visible={visible}
               FooterComponent={() => (
                 <ImageViewFooter>
-                  <TouchableOpacity activeOpacity={0.7}>
+                  <TouchableOpacity activeOpacity={0.7} onPress={async()=>{downloadImageLocally(`${BASE_URL}data/image?key=${data.fileName}&client_secret=${secret}&server_secret=${serverSecret}`, data)}}>
                     <AntDesign name="download" size={24} color="#1D2026" />
                   </TouchableOpacity>
                   <Tag>
@@ -301,7 +345,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
                       #1{/* {data.tag} */}
                     </Text>
                   </Tag>
-                  <OptionIcon name="dots-three-horizontal" />
+                  <TouchableOpacity onPress={()=>console.log("hello")}><OptionIcon name="dots-three-horizontal" /></TouchableOpacity>
                   <TouchableOpacity activeOpacity={0.6}>
                     <AntDesign name="delete" size={24} color="#1D2026" />
                   </TouchableOpacity>
@@ -310,6 +354,59 @@ function UploadedScreen({ route, navigation, darkMode }) {
               onRequestClose={() => setIsVisible(false)}
             />
           </ScrollView>
+          <Modal
+        isVisible={showModal}
+        onBackButtonPress={() => setShowModal(false)}
+        onBackdropPress={() => setShowModal(false)}
+      >
+        <ModalContainer>
+          <ModalContent>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              style={{
+                alignSelf: "flex-end",
+                width: 25,
+                height: 25,
+                backgroundColor: "#FF2465",
+                borderRadius: 25,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => setShowModal(false)}
+            >
+              <AntDesign name="close" size={15} color="white" />
+            </TouchableOpacity>
+            <TextInput
+              placeholder="Enter a new tag..."
+              color="white"
+              onChangeText={(text)=>{SetTag(text)}}
+              placeholderTextColor="white"
+              style={styles.input}
+            />
+
+            <View style={styles.modalTagView}>
+              
+              <TouchableOpacity onPress={async()=>{ RenameTag(data)}} style={{backgroundColor: "#FF2465",width: 100,
+                height: 30,
+                color:"white",
+                marginTop: 20,
+                padding: 5,
+                width: 140,
+                backgroundColor: "#FF2465",
+                alignSelf: "flex-start",
+                borderRadius: 100,}}><Text style={{color:"white", textAlign:"center"}}>{renaming?"Please wait...":"Rename Tag"}</Text></TouchableOpacity>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+              </View>
+            </View>
+          </ModalContent>
+        </ModalContainer>
+      </Modal>
         </View>
       </MenuContainer>
     </View>
@@ -324,6 +421,21 @@ const Row = styled.View`
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
+`;
+const ModalContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+const ModalContent = styled.View`
+  min-height: 30%;
+  width: 90%;
+  background-color: white;
+  border-radius: 20px;
+  padding-horizontal: 20px;
+  padding-vertical: 20px;
+  overflow: hidden;
+  background-color: #1d2026;
 `;
 const LockButton = styled.TouchableOpacity`
   padding-vertical: 10px;

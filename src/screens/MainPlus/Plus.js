@@ -257,7 +257,7 @@ function HomeScreen(props) {
   };
   return (
     <Container darkMode={props.darkMode}>
-      <StatusBar barStyle="default" />
+      {/* <StatusBar barStyle="default" /> */}
       <Modal visible={showImagePicker}>
         <View style={{ flex: 1, marginTop: 50 }}>
           <AssetsSelector
@@ -265,7 +265,7 @@ function HomeScreen(props) {
             Errors={widgetErrors}
             Styles={widgetStyles}
             Navigator={widgetNavigator}
-            // Resize={widgetResize} know how to use first , perform slower results.
+          // Resize={widgetResize} know how to use first , perform slower results.
           />
         </View>
       </Modal>
@@ -388,8 +388,8 @@ function HomeScreen(props) {
             <TouchableOpacity
               style={styles.pkgButton}
               onPress={() => {
+                Alert.alert("Tier Selected", `You have selected ${pkg} has your preferred tier. Please choose file to proceed`, [{ text: "Confirm", onPress: () => { showUploadSection(!uploadSection); } }])
                 setSelectPkg(!selectPkg);
-                showUploadSection(!uploadSection);
               }}
               activeOpacity={0.7}
             >

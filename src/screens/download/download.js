@@ -21,17 +21,16 @@ import ImageView from "react-native-image-viewing";
 import styled from "styled-components";
 import { apiRequest, BASE_URL } from "../../helpers/constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RNFetchBlob from "rn-fetch-blob";// import RNFetchBlob from 'rn-fetch-blob'
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from "expo-sharing";
+import * as Permissions from 'expo-permissions';
+import * as MediaLibrary from 'expo-media-library';
+import Modal from "react-native-modal";
+import { deleteLocalFile } from "../uploaded/image-downloader";
 const Height = Dimensions.get("screen").height;
 // const {config}= RNFetchBlob
+// import RNFS from "react-native-fs"
 
-const downloadImageLocally = async(location)=>{
-  try {
-
- console.log(RNFetchBlob);
-}catch(e){}
-
-}
 
 
 function DownloadScreen({ navigation, darkMode }) {
@@ -40,18 +39,53 @@ function DownloadScreen({ navigation, darkMode }) {
   const [data, setData] = useState("");
   const [download,setDownload]= useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [downloadStarted, setDownloadStarted] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(false);
+  const downloadImageLocally = async(image)=>{
+    
+    try {
+      /****TODO: uninstall expo-permissions library ***/
+      setDownloadStarted(true);
+      const gifDir = FileSystem.documentDirectory + `Haven/${image.fileName}`;
+      const fileUri = gifDir +`Haven/${image.fileName}`
+      const dirInfo = await FileSystem.getInfoAsync(gifDir);
+    if (!dirInfo.exists) {
+      await FileSystem.makeDirectoryAsync(gifDir, { intermediates: true });
+    }
+    const fileInfo = await FileSystem.getInfoAsync(fileUri);
+     if (!fileInfo.exists) {
+       const file = await FileSystem.downloadAsync(image.location,gifDir);
+       console.log(file);
+       setDownloadStarted(false)
+       const asset = await MediaLibrary.createAssetAsync(uri);
+       const album = await MediaLibrary.getAlbumAsync('Download');
+       if (album == null) {
+        await MediaLibrary.createAlbumAsync('Download', asset, false);
+      } else {
+        await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+        Alert.alert("Success","File Successfully downloaded to your phone. Check download folder");
+
+      }
+     }
+  
+  }catch(e){
+    Alert.alert("Error",e.message)
+    setDownloadStarted(false)
+  }
+  }
+
 
 const fetchFile =async()=>{
   try {
-    const token =await AsyncStorage.getItem("token");
-    const res = await apiRequest({method:'GET', url:`${BASE_URL}data/all-uploaded-files`, Authorization:`Bearer ${token}`})
-      if (res) {
-        setDownload(res.data.files)
-        setRefreshing(false)
-      }
+    const localFile = await AsyncStorage.getItem('local-files')
+    if(localFile){
+      const f= JSON.parse(localFile)
+      setDownload(f);
+      setRefreshing(false)
+    } 
   } catch (error) {
     setRefreshing(false)
-    Alert.alert(error.response.data.msg);
+    Alert.alert(error.message);
   }
 }
 const onRefresh = React.useCallback(() => {
@@ -72,18 +106,7 @@ const RenameTag= async(id)=>{
   }
 }
 
-const deleteFile=async(id)=>{
-  try {
-    const token = await AsyncStorage.getItem("token");
-    const res = await apiRequest({method:'DELETE', url:`${BASE_URL}data/delete-file/${id}`, Authorization:`Bearer ${token}`, body:{}})
-    if(res){
-      Alert.alert(res.data.msg);
-    }
-  } catch (error) {
-    console.log(error);
-    Alert.alert(error.response.data.msg);
-  }
-}
+
 
   return (
     <Container style={{ backgroundColor: "#151515" }}>
@@ -304,7 +327,7 @@ const deleteFile=async(id)=>{
           <ImageView
             images={[
               {
-                uri: data.location,
+                uri: data.location
               },
             ]}
             backgroundColor="rgba(0,0,0,0.9)"
@@ -312,7 +335,7 @@ const deleteFile=async(id)=>{
             visible={visible}
             FooterComponent={() => (
               <ImageViewFooter>
-                <TouchableOpacity onPress={async()=>{downloadImageLocally(data.location)}} activeOpacity={0.7}>
+                <TouchableOpacity onPress={async()=>{downloadImageLocally(data), console.log("pressed");}} activeOpacity={0.7}>
                   <AntDesign name="download" size={24} color="#1D2026" />
                 </TouchableOpacity>
                 <Tag>
@@ -320,8 +343,9 @@ const deleteFile=async(id)=>{
                     {data.tag}
                   </Text>
                 </Tag>
-                <OptionIcon name="dots-three-horizontal" />
-                <TouchableOpacity onPress={async()=>{deleteFile(data.id)}} activeOpacity={0.6}>
+                 
+                <TouchableOpacity onPress={()=>console.log("hello")}><OptionIcon name="dots-three-horizontal" /></TouchableOpacity>
+                <TouchableOpacity onPress={async()=>{Alert.alert("Warning","You are about to permanently delete this file",[{text:"I know",onPress:()=>{deleteLocalFile(data)}},{text:"Cancel",onPress:()=>{}}],{cancelable:true})}} activeOpacity={0.6}>
                   <AntDesign name="delete" size={24} color="#1D2026" />
                 </TouchableOpacity>
               </ImageViewFooter>

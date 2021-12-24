@@ -221,7 +221,6 @@ function HomeScreen(props) {
               activeOpacity={0.6}
               style={styles.button}
               onPress={() =>{
-                console.log(info);
                 navigation.navigate(info.title, { name: info.key })
               }
             }

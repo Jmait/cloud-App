@@ -15,30 +15,35 @@ import { BASE_URL } from "../../helpers/constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { addFile, setStorageClass } from "../../store/actions/fileActions";
 import { connect } from "react-redux";
+import { Buffer } from "buffer";
+
 
 const Signup = ({ navigation }) => {
   const [username, setUserName] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [vaultEncryptionKey, setVaultEncryptionKey] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
-
-  const handleSignUpSubmit = () => {
+ 
+  const handleSignUpSubmit = async() => {
     if (password === confirmPassword) {
+      const hashedPassword = Buffer.from(password).toString("base64"); //password are converted to base64 before transported
+      await AsyncStorage.setItem("secret",hashedPassword);
       setSubmitting(true);
       axios
         .post(BASE_URL + "auth/signup", {
           username,
-          password,
+          password:hashedPassword,
           email,
         })
         .then(async (response) => {
           await AsyncStorage.setItem("token", response.data.token);
+          await AsyncStorage.setItem("encryptionKey",vaultEncryptionKey);
           setSubmitting(false);
           navigation.navigate("Main");
         })
         .catch((error) => {
-          console.log(error);
           if (error && error.response) {
             Alert.alert("Error", error.response.data.msg);
             setSubmitting(false);
@@ -108,7 +113,12 @@ const Signup = ({ navigation }) => {
 
             <TouchableOpacity
               onPress={() => {
-                handleSignUpSubmit();
+              
+                Alert.alert("Vault Key Confirnmation","You are about to signin into the  system. Ensure your vault keys are correct. Only correct keys can decrypt your data. Please remember your keys are not save in our system",[{text:"I know", onPress:async()=>{  handleSignUpSubmit();}},{text:"Cancel",onPress:async()=>{}}],{
+                  cancelable: true,
+                  onDismiss: () =>{}
+                  
+                },)
               }}
               style={[styles.btn, { backgroundColor: "#FF2465" }]}
               activeOpacity={0.6}

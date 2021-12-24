@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-  Button,
   View,
   Text,
   StyleSheet,
@@ -11,49 +10,95 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
+import { apiRequest, BASE_URL } from "../../helpers/constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Frequent = (props) => (
+const Frequent = (props) => {
+  const [storage, setStorage] =React.useState(null);
+  const getFrequentStorage=async()=>{
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const res = await apiRequest({method:"GET", url:`${BASE_URL}data/frequent-vault`, Authorization:`Bearer ${token}`})
+      setStorage(res.data.files)
+    } catch (error) {
+       setStorage(null);
+    }
+  }
+React.useEffect(()=>{
+ getFrequentStorage();
+},[])
+  return(
   <View style={styles.frequentContainer}>
     <View style={styles.row}>
       <View style={{ width: "40%" }}>
-        <Text style={[styles.title]}>0.24 GB out of 1 GB used</Text>
+        <Text style={[styles.title]}>{storage!=null?`You have used ${(storage.usedVaultSize/1048576).toFixed(2)}MB out of 50GB`:"No active subscription"}</Text>
       </View>
       <View style={{ width: "40%", alignItems: "center" }}>
         <Entypo name="infinity" size={27} color="#FF2465" />
-        <Text style={[styles.title]}>keys remaining this month</Text>
+        <Text style={[styles.title]}>{storage!=null?`You have ${storage.vaultKeys.length} keys remaining this month`:"You have no active subscription"}</Text>
       </View>
     </View>
   </View>
 );
+}
+const Infrequent = (props) => {
+  const [storage, setStorage] =React.useState(null);
+  const getInFrequentStorage = async()=>{
+    try {
+   
+      const res = await apiRequest({method:"GET", url:`${BASE_URL}/data/infrequent-vault`})
+      setStorage(res.data.files)
+    } catch (error) {
+      setStorage(null)
+    }
+  }
+  React.useEffect(()=>{
+    getInFrequentStorage();
+   },[]);
+ return  (
 
-const Infrequent = (props) => (
+  
   <View style={styles.frequentContainer}>
     <View style={styles.row}>
       <View style={{ width: "40%" }}>
-        <Text style={[styles.title]}>1.35 GB out of 3 GB used</Text>
+      <Text style={[styles.title]}>{storage!=null?`You have used ${(storage.usedVaultSize/1048576).toFixed(2)}MB out of 100GB`:"No active subscription"}</Text>
       </View>
       <View style={{ width: "40%", alignItems: "center" }}>
         <Text style={{ color: "#FF2465", fontSize: 16 }}>3/5</Text>
-        <Text style={[styles.title]}>keys remaining this month</Text>
+        <Text style={[styles.title]}>{storage!=null?`You have ${storage.vaultKeys.length} keys remaining this month`:"You have no active subscription for this tier"}</Text>
       </View>
     </View>
   </View>
 );
+  }
 
-const Archived = (props) => (
+const Archived = (props) => {
+  const [storage, setStorage] =React.useState(null);
+  const getArchiveStorage=async()=>{
+    try {
+      const res = await apiRequest({method:"GET", url:`${BASE_URL}/data/infrequent-vault`})
+      setStorage(res.data.files)
+    } catch (error) {
+    setStorage(null)
+    }
+  }
+  React.useEffect(()=>{
+    getArchiveStorage();
+   },[])
+  return (
   <View style={styles.frequentContainer}>
     <View style={styles.row}>
       <View style={{ width: "40%" }}>
-        <Text style={[styles.title]}>3.83 GB out of 6 GB used</Text>
+      <Text style={[styles.title]}>{storage!=null?`You have used ${(storage.usedVaultSize/1048576).toFixed(2)}MB out of 200GB`:"No active subscription"}</Text>
       </View>
       <View style={{ width: "40%", alignItems: "center" }}>
         <Text style={{ color: "#FF2465", fontSize: 16 }}>1/1</Text>
-        <Text style={[styles.title]}>keys remaining this month</Text>
+        <Text style={[styles.title]}>{storage!=null?`You have ${storage.vaultKeys.length} keys remaining this month`:"You have no active subscription for this tier"}</Text>
       </View>
     </View>
   </View>
 );
-
+}
 function HomeCard(props) {
   const layout = useWindowDimensions();
 

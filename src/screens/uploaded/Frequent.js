@@ -1,501 +1,3 @@
-// import React, { useState } from "react";
-// import {
-//   View,
-//   Text,
-//   TextInput,
-//   TouchableOpacity,
-//   StyleSheet,
-//   StatusBar,
-//   ScrollView,
-//   Switch,
-//   Dimensions,
-//   Image,
-//   ActivityIndicator,
-// } from "react-native";
-// import styled from "styled-components";
-// const Height = Dimensions.get("screen").height;
-// import {
-//   MaterialIcons,
-//   FontAwesome,
-//   AntDesign,
-//   Entypo,
-// } from "@expo/vector-icons";
-// import ImageView from "react-native-image-viewing";
-// import { connect } from "react-redux";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-// import axios from "axios";
-// import { BASE_URL } from "../../helpers/constants";
-
-// const dummyData = [
-//   {
-//     name: "IMG_90.PNG",
-//     tag: "#space",
-//     type: "Image",
-//     size: "295 KB",
-//     path: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-//   },
-//   {
-//     name: "Vid_21.MP4",
-//     tag: "#tall",
-//     type: "Video",
-//     size: "1.2 GB",
-//     path: "https://images.unsplash.com/photo-1573273787173-0eb81a833b34",
-//   },
-//   {
-//     name: "Tax2021.pdf",
-//     tag: "#business",
-//     type: "Document",
-//     size: "30 MB",
-//     path: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-//   },
-//   {
-//     name: "Songs.MP3",
-//     tag: "#music",
-//     type: "Music",
-//     size: "2 MB",
-//     path: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-//   },
-// ];
-
-// function UploadedScreen({ route, navigation, darkMode }) {
-//   const [view, setView] = React.useState(false);
-//   const [visible, setIsVisible] = useState(false);
-//   const [data, setData] = useState("");
-//   const { name } = route.params;
-
-//   const [timeUpdate, setTimeUpdate] = React.useState(false);
-//   const [counter, setCounter] = React.useState(1800);
-//   const [time, setTime] = React.useState("30:00");
-//   const [uploadedFiles, setUploadedFiles] = React.useState([]);
-//   const [isLoading, setLoading] = React.useState(true);
-//   let timer;
-
-//   const _handleResetPress = () => {
-//     setCounter(1800);
-//   };
-
-//   React.useEffect(() => {
-//     // timer = setInterval(() => {
-//     //   setCounter((prevCount) => {
-//     //     let minutes = Math.floor(prevCount / 60);
-//     //     let seconds = prevCount - minutes * 60;
-//     //     if (minutes >= 0 && seconds >= 0) {
-//     //       setTime(`${minutes}:${seconds > 9 ? seconds : "0" + seconds}`);
-//     //     } else {
-//     //       navigation.goBack();
-//     //     }
-//     //     return prevCount - 1;
-//     //   });
-//     // }, 1000);
-//     getFiles();
-//     // return () => clearInterval(timer);
-//   }, []);
-
-//   const getFiles = async () => {
-//     const token = await AsyncStorage.getItem("user");
-//     axios
-//       .get(BASE_URL + "data/files", {
-//         headers: {
-//           Authorization: token,
-//         },
-//       })
-//       .then((response) => {
-//         if (response && response.data) {
-//           setUploadedFiles(response.data.frequent);
-//           setLoading(false);
-//         }
-//       });
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <MenuContainer>
-//         <View style={styles.header}>
-//           <Row>
-//             <Text style={styles.title}>Frequent</Text>
-//             <LockButton onPress={() => navigation.goBack()}>
-//               <LockTxt>Lock Now</LockTxt>
-//             </LockButton>
-//           </Row>
-//           <View style={styles.line} />
-//           <Row>
-//             <Text style={styles.timerTxt}>Time Before auto-lock</Text>
-//             <Row>
-//               <Text style={styles.timerTxt}>{time} or</Text>
-//               <LockButton onPress={() => _handleResetPress()}>
-//                 <LockTxt>Reset</LockTxt>
-//               </LockButton>
-//             </Row>
-//           </Row>
-//           <Text style={[styles.timerTxt, { fontSize: 14 }]}>
-//             512 MB of 1 GB used
-//           </Text>
-//         </View>
-//         <View
-//           style={[
-//             styles.body,
-//             {
-//               backgroundColor: darkMode ? "black" : "white",
-//             },
-//           ]}
-//         >
-//           <ScrollView showsVerticalScrollIndicator={false}>
-//             <View style={[styles.row, { justifyContent: "flex-end" }]}>
-//               <TouchableOpacity
-//                 style={{ marginHorizontal: 7 }}
-//                 activeOpacity={0.5}
-//                 onPress={() => setView(!view)}
-//               >
-//                 <MaterialIcons
-//                   name={view ? "grid-view" : "format-list-bulleted"}
-//                   size={30}
-//                   color={darkMode ? "white" : "#1D2026"}
-//                 />
-//               </TouchableOpacity>
-
-//               <FontAwesome
-//                 name="sort"
-//                 size={30}
-//                 color={darkMode ? "white" : "#1D2026"}
-//               />
-//             </View>
-
-//             <View style={styles.cardContainer}>
-//               {view ? (
-//                 <View style={styles.list}>
-//                   <View style={styles.row}>
-//                     <Text
-//                       style={[
-//                         styles.heading,
-//                         { color: darkMode ? "white" : "#1D2026" },
-//                       ]}
-//                     >
-//                       Name
-//                     </Text>
-//                     <Text
-//                       style={[
-//                         styles.heading,
-//                         { color: darkMode ? "white" : "#1D2026" },
-//                       ]}
-//                     >
-//                       Tag
-//                     </Text>
-//                     <Text
-//                       style={[
-//                         styles.heading,
-//                         { color: darkMode ? "white" : "#1D2026" },
-//                       ]}
-//                     >
-//                       Type
-//                     </Text>
-//                     <Text
-//                       style={[
-//                         styles.heading,
-//                         { color: darkMode ? "white" : "#1D2026" },
-//                       ]}
-//                     >
-//                       Size
-//                     </Text>
-//                   </View>
-//                   {isLoading ? (
-//                     <ActivityIndicator />
-//                   ) : (
-//                     uploadedFiles &&
-//                     uploadedFiles.map((val, i) => {
-//                       return (
-//                         <View key={i}>
-//                           <View style={styles.row}>
-//                             <TouchableOpacity
-//                               onPress={() => {
-//                                 setIsVisible(!visible);
-//                                 setData(val);
-//                               }}
-//                               style={{ width: "25%" }}
-//                             >
-//                               <Text
-//                                 style={[
-//                                   styles.name,
-//                                   {
-//                                     width: "100%",
-//                                     color: darkMode ? "white" : "#1D2026",
-//                                   },
-//                                 ]}
-//                               >
-//                                 {val.fileName}
-//                               </Text>
-//                             </TouchableOpacity>
-//                             <Tag>
-//                               <Text style={{ color: "white" }}>{i}</Text>
-//                             </Tag>
-//                             <Text
-//                               style={[
-//                                 styles.name,
-//                                 { color: darkMode ? "white" : "#1D2026" },
-//                               ]}
-//                             >
-//                               {val.fileType}
-//                             </Text>
-//                             <Text
-//                               style={[
-//                                 styles.name,
-//                                 { color: darkMode ? "white" : "#1D2026" },
-//                               ]}
-//                             >
-//                               {val.fileSize}
-//                             </Text>
-//                           </View>
-
-//                           <View
-//                             style={[
-//                               styles.line,
-//                               {
-//                                 height: 1,
-//                                 width: "100%",
-//                                 marginHorizontal: 10,
-//                               },
-//                             ]}
-//                           />
-//                         </View>
-//                       );
-//                     })
-//                   )}
-//                 </View>
-//               ) : (
-//                 <View style={styles.grid}>
-//                   {isLoading ? (
-//                     <ActivityIndicator />
-//                   ) : (
-//                     uploadedFiles &&
-//                     uploadedFiles.map((val, i) => {
-//                       return (
-//                         <View style={styles.gridCard} key={i}>
-//                           <TouchableOpacity
-//                             onPress={() => {
-//                               setIsVisible(!visible);
-//                               setData(val);
-//                             }}
-//                           >
-//                             <Image
-//                               source={{
-//                                 uri: val.location,
-//                               }}
-//                               style={{
-//                                 width: "100%",
-//                                 height: 80,
-//                                 resizeMode: "stretch",
-//                               }}
-//                             />
-//                             <Text
-//                               style={{
-//                                 ...styles.description,
-//                                 color: darkMode ? "white" : "#1D2026",
-//                               }}
-//                             >
-//                               {val.fileName}
-//                             </Text>
-//                             <Tag>
-//                               <Text
-//                                 style={[
-//                                   styles.description,
-//                                   { fontSize: 13, color: "white" },
-//                                 ]}
-//                               >
-//                                 #{i}
-//                               </Text>
-//                             </Tag>
-//                           </TouchableOpacity>
-//                         </View>
-//                       );
-//                     })
-//                   )}
-//                 </View>
-//               )}
-//             </View>
-
-//             <ImageView
-//               backgroundColor="rgba(0,0,0,0.4)"
-//               images={[
-//                 {
-//                   uri: data.location,
-//                 },
-//               ]}
-//               imageIndex={0}
-//               visible={visible}
-//               FooterComponent={() => (
-//                 <ImageViewFooter>
-//                   <TouchableOpacity activeOpacity={0.7}>
-//                     <AntDesign name="download" size={24} color="#1D2026" />
-//                   </TouchableOpacity>
-//                   <Tag>
-//                     <Text style={{ color: "white", fontSize: 14 }}>
-//                       #1{/* {data.tag} */}
-//                     </Text>
-//                   </Tag>
-//                   <OptionIcon name="dots-three-horizontal" />
-//                   <TouchableOpacity activeOpacity={0.6}>
-//                     <AntDesign name="delete" size={24} color="#1D2026" />
-//                   </TouchableOpacity>
-//                 </ImageViewFooter>
-//               )}
-//               onRequestClose={() => setIsVisible(false)}
-//             />
-//           </ScrollView>
-//         </View>
-//       </MenuContainer>
-//     </View>
-//   );
-// }
-
-// const MenuContainer = styled.View`
-//   padding-top: 55px;
-//   background-color: ${(props) => props.theme.PRIMARY_BACKGROUD_COLOR};
-// `;
-// const Row = styled.View`
-//   flex-direction: row;
-//   justify-content: space-between;
-//   align-items: center;
-// `;
-// const LockButton = styled.TouchableOpacity`
-//   padding-vertical: 10px;
-//   padding-horizontal: 15px;
-//   border-radius: 10px;
-//   background-color: white;
-// `;
-// const LockTxt = styled.Text`
-//   font-size: 16px;
-//   font-weight: bold;
-// `;
-// const Tag = styled.View`
-//   background-color: ${(props) => props.theme.PRIMARY_BACKGROUD_COLOR};
-//   padding-vertical: 10px;
-//   padding-horizontal: 15px;
-//   border-radius: 10px;
-//   align-items: center;
-//   justify-content: center;
-//   align-self: center;
-//   margin-top: 5px;
-// `;
-// const ImageViewFooter = styled.View`
-//   flex-direction: row;
-//   align-items: center;
-//   justify-content: space-between;
-//   padding-horizontal: 30px;
-//   margin-horizontal: 30px;
-//   background-color: white;
-//   padding-vertical: 10px;
-//   border-top-right-radius: 25px;
-//   border-top-left-radius: 25px;
-// `;
-// const OptionIcon = styled(Entypo)`
-//   font-size: 22px;
-// `;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//   },
-//   menuContainer: {
-//     paddingTop: 55,
-//     backgroundColor: "#1D2026",
-//   },
-//   header: {
-//     paddingHorizontal: 25,
-//     paddingBottom: 30,
-//   },
-
-//   title: {
-//     color: "white",
-//     fontSize: 10,
-//     fontWeight: "bold",
-//     lineHeight: 28,
-//     fontStyle: "normal",
-//     fontFamily: "Helvetica",
-//   },
-
-//   line: {
-//     height: 2,
-//     // width: "90%",
-//     backgroundColor: "white",
-//     marginVertical: 10,
-//   },
-//   body: {
-//     paddingBottom: 20,
-//     elevation: 7,
-//     borderTopLeftRadius: 30,
-//     borderTopRightRadius: 30,
-//     paddingHorizontal: 25,
-//     paddingVertical: 30,
-//     height: Height,
-//   },
-
-//   title: {
-//     color: "white",
-//     fontSize: 24,
-//     fontWeight: "bold",
-//     lineHeight: 28,
-//     fontStyle: "normal",
-//     fontFamily: "Helvetica",
-//   },
-
-//   row: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "space-between",
-//   },
-//   heading: {
-//     color: "#1D2026",
-//     fontSize: 16,
-//     fontWeight: "bold",
-//     fontFamily: "Helvetica",
-//     width: "25%",
-//     marginLeft: 10,
-//   },
-
-//   cardContainer: {
-//     marginVertical: 20,
-//   },
-//   grid: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     flexWrap: "wrap",
-//   },
-//   gridCard: {
-//     width: "30%",
-//     marginVertical: 15,
-//     margin: 5,
-//   },
-//   description: {
-//     textAlign: "center",
-//     color: "#1D2026",
-//     fontSize: 15,
-//     marginTop: 1,
-//     fontFamily: "Helvetica",
-//   },
-//   list: {
-//     paddingHorizontal: 4,
-//   },
-//   name: {
-//     fontSize: 14,
-//     color: "#1D2026",
-//     fontWeight: "600",
-//     marginVertical: 10,
-//     // width: "25%",
-//     // marginLeft: 10,
-//     fontFamily: "Helvetica",
-//   },
-//   timerTxt: {
-//     fontSize: 16,
-//     fontWeight: "bold",
-//     color: "white",
-//     marginRight: 10,
-//   },
-// });
-
-// const mapStateToProps = (state) => ({
-//   darkMode: state.theme.darkMode,
-// });
-
-// export default connect(mapStateToProps)(UploadedScreen);
 
 import React, { useState } from "react";
 import {
@@ -525,38 +27,10 @@ import ImageView from "react-native-image-viewing";
 import { connect } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { BASE_URL } from "../../helpers/constants";
-
-const dummyData = [
-  {
-    name: "IMG_90.PNG",
-    tag: "#space",
-    type: "Image",
-    size: "295 KB",
-    path: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-  },
-  {
-    name: "Vid_21.MP4",
-    tag: "#tall",
-    type: "Video",
-    size: "1.2 GB",
-    path: "https://images.unsplash.com/photo-1573273787173-0eb81a833b34",
-  },
-  {
-    name: "Tax2021.pdf",
-    tag: "#business",
-    type: "Document",
-    size: "30 MB",
-    path: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-  },
-  {
-    name: "Songs.MP3",
-    tag: "#music",
-    type: "Music",
-    size: "2 MB",
-    path: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-  },
-];
+import { apiRequest, BASE_URL } from "../../helpers/constants";
+import CountDown from 'react-native-countdown-component';
+import { downloadImageLocally } from "./image-downloader";
+import Modal from "react-native-modal";
 
 function UploadedScreen({ route, navigation, darkMode }) {
   const [view, setView] = React.useState(false);
@@ -564,52 +38,92 @@ function UploadedScreen({ route, navigation, darkMode }) {
   const [data, setData] = useState("");
   const { name } = route.params;
 
-  const [timeUpdate, setTimeUpdate] = React.useState(false);
+  const [renaming, setTagRenaming] = React.useState(false);
   const [counter, setCounter] = React.useState(1800);
-  const [time, setTime] = React.useState("30:00");
+  const [timer, setTime] = React.useState(60 * 29 + 59);
   const [uploadedFiles, setUploadedFiles] = React.useState([]);
+  
   const [isLoading, setLoading] = React.useState(true);
-  let timer;
-
+  const [showModal, setShowModal]= React.useState(false);
+  const [tag, SetTag] = React.useState("");
+   const [id, setId]= React.useState(0);
+   const [secret,setClientSecret] = React.useState('')
+   const [serverSecret, setServerSecret] = React.useState('');
   const _handleResetPress = () => {
+   
+
+    setId(Math.random())
     setCounter(1800);
   };
-
-  React.useEffect(() => {
-    // timer = setInterval(() => {
-    //   setCounter((prevCount) => {
-    //     let minutes = Math.floor(prevCount / 60);
-    //     let seconds = prevCount - minutes * 60;
-    //     if (minutes >= 0 && seconds >= 0) {
-    //       setTime(`${minutes}:${seconds > 9 ? seconds : "0" + seconds}`);
-    //     } else {
-    //       navigation.goBack();
-    //     }
-    //     return prevCount - 1;
-    //   });
-    // }, 1000);
+  
+  let client_secret;
+  React.useEffect(async() => {
+    getServerSecret();
     getFiles();
-    // return () => clearInterval(timer);
+  
+    
   }, []);
 
-  const getFiles = async () => {
+  const getServerSecret = async () => {
     const token = await AsyncStorage.getItem("token");
     axios
-      .get(BASE_URL + "data/files/frequent", {
+      .get(BASE_URL + "data/server-secret", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
         if (response && response.data) {
+          //  console.log(response.data.msg);
+           setServerSecret(response.data.msg);
+        }
+      }).catch((err)=>{
+        Alert.alert("Error",err.response.data.msg)
+      })
+  };
+
+  const getFiles = async () => {
+    console.log("i am called");
+    const token = await AsyncStorage.getItem("token");
+    const   client_secret =await  AsyncStorage.getItem("secret");
+    setClientSecret(client_secret);
+    axios
+      .get(BASE_URL + "data/files/frequent", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(async(response) => {
+        if (response && response.data) {
+       console.log(response);
           setUploadedFiles(response.data.frequent);
           setLoading(false);
         }
       }).catch((err)=>{
-        Alert.alert(err.response.data.msg)
+        Alert.alert("Error",err.response.data.msg)
       })
   };
 
+  
+  
+  const  RenameTag =async(file)=>{
+    try {
+      setTagRenaming(true);
+     const token =await AsyncStorage.getItem("token");
+       const  response = await apiRequest({method:"PUT", url:`${BASE_URL}data/rename-tag`,body:{id:file.id,tag}, Authorization:`Bearer ${token}`});
+       if(response){
+         setShowModal(false);
+         setTagRenaming(false);
+         Alert.alert("Success","Your file tag has been successfully updated.Please referesh the page")
+       }
+    } catch (error) {
+      setTagRenaming(false);
+      setShowModal(false);
+      Alert.alert("Error", error.message);
+    }
+  }
+
+     
   return (
     <View style={styles.container}>
       <MenuContainer>
@@ -632,7 +146,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
           </Row>
 
           <Row style={{ justifyContent: "space-between" }}>
-            <LockTxt style={{ fontSize: 20 }}>27:41</LockTxt>
+          <LockTxt style={{ fontSize: 25 }}><CountDown  id={`${id}`} digitStyle={{backgroundColor: 'none'}} digitTxtStyle={{color: 'white'}}   until={timer} showSeparator={false}   timeLabels={{m: null, s: null}} timeToShow={['M', 'S']} onFinish={() => navigation.goBack()}/></LockTxt>
             <ResetButton onPress={() => _handleResetPress()}>
               <LockTxt>Reset</LockTxt>
             </ResetButton>
@@ -781,6 +295,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
                   ) : (
                     uploadedFiles &&
                     uploadedFiles.map((val, i) => {
+                 
                       return (
                         <View style={styles.gridCard} key={i}>
                           <TouchableOpacity
@@ -791,7 +306,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
                           >
                             <Image
                               source={{
-                                uri: val.location,
+                                uri: `${BASE_URL}data/image?key=${val.fileName}&client_secret=${secret}&server_secret=${serverSecret}`
                               }}
                               style={{
                                 width: "100%",
@@ -814,7 +329,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
                                   { fontSize: 13, color: "white" },
                                 ]}
                               >
-                                #{i}
+                                #{val.tag}
                               </Text>
                             </LockButton>
                           </TouchableOpacity>
@@ -830,22 +345,25 @@ function UploadedScreen({ route, navigation, darkMode }) {
               backgroundColor="rgba(0,0,0,0.4)"
               images={[
                 {
-                  uri: data.location,
+                  uri: `${BASE_URL}data/image?key=${data.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
                 },
               ]}
               imageIndex={0}
               visible={visible}
               FooterComponent={() => (
                 <ImageViewFooter>
-                  <TouchableOpacity activeOpacity={0.7}>
+                  
+                  <TouchableOpacity activeOpacity={0.7} onPress={async()=>{downloadImageLocally(`${BASE_URL}data/image?key=${data.fileName}&client_secret=${secret}&server_secret=${serverSecret}`, data)}}>
                     <AntDesign name="download" size={24} color="#1D2026" />
                   </TouchableOpacity>
                   <Tag>
                     <Text style={{ color: "white", fontSize: 14 }}>
-                      #1{/* {data.tag} */}
+                      #{data.tag}
                     </Text>
                   </Tag>
-                  <OptionIcon name="dots-three-horizontal" />
+                  {/* Modal for Adding Tag */}
+      
+                  <TouchableOpacity onPress={()=>setShowModal(true)}><OptionIcon name="dots-three-horizontal" /></TouchableOpacity>
                   <TouchableOpacity activeOpacity={0.6}>
                     <AntDesign name="delete" size={24} color="#1D2026" />
                   </TouchableOpacity>
@@ -854,6 +372,59 @@ function UploadedScreen({ route, navigation, darkMode }) {
               onRequestClose={() => setIsVisible(false)}
             />
           </ScrollView>
+          <Modal
+        isVisible={showModal}
+        onBackButtonPress={() => setShowModal(false)}
+        onBackdropPress={() => setShowModal(false)}
+      >
+        <ModalContainer>
+          <ModalContent>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              style={{
+                alignSelf: "flex-end",
+                width: 25,
+                height: 25,
+                backgroundColor: "#FF2465",
+                borderRadius: 25,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => setShowModal(false)}
+            >
+              <AntDesign name="close" size={15} color="white" />
+            </TouchableOpacity>
+            <TextInput
+              placeholder="Enter a new tag..."
+              color="white"
+              onChangeText={(text)=>{SetTag(text)}}
+              placeholderTextColor="white"
+              style={styles.input}
+            />
+
+            <View style={styles.modalTagView}>
+              
+              <TouchableOpacity onPress={async()=>{ RenameTag(data)}} style={{backgroundColor: "#FF2465",width: 100,
+                height: 30,
+                color:"white",
+                marginTop: 20,
+                padding: 5,
+                width: 140,
+                backgroundColor: "#FF2465",
+                alignSelf: "flex-start",
+                borderRadius: 100,}}><Text style={{color:"white", textAlign:"center"}}>{renaming?"Please wait...":"Rename Tag"}</Text></TouchableOpacity>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+              </View>
+            </View>
+          </ModalContent>
+        </ModalContainer>
+      </Modal>
         </View>
       </MenuContainer>
     </View>
@@ -863,6 +434,21 @@ function UploadedScreen({ route, navigation, darkMode }) {
 const MenuContainer = styled.View`
   padding-top: 50px;
   background-color: ${(props) => props.theme.PRIMARY_BACKGROUD_COLOR};
+`;
+const ModalContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+const ModalContent = styled.View`
+  min-height: 30%;
+  width: 90%;
+  background-color: white;
+  border-radius: 20px;
+  padding-horizontal: 20px;
+  padding-vertical: 20px;
+  overflow: hidden;
+  background-color: #1d2026;
 `;
 const Row = styled.View`
   flex-direction: row;
@@ -926,7 +512,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     paddingBottom: 30,
   },
-
+  input: {
+    borderBottomWidth: 0.6,
+    borderBottomColor: "white",
+    fontFamily: "Helvetica",
+    marginVertical: 5,
+    width: "80%",
+    paddingBottom: 3,
+  },
   title: {
     color: "white",
     fontSize: 10,

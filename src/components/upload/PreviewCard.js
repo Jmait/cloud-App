@@ -16,9 +16,11 @@ const PreviewCard = (props) => {
   const fileSize = props.size / 1048576;
   const [isEnabled, setIsEnabled] = React.useState(false);
   const getPreview = () => {
+    // console.log(props);
     const files = [".docx", ".doc"];
     const images = [".jpeg", ".jpg"];
     if (new RegExp(files.join("|")).test(props.name)) {
+     
       return <MaterialIcons name="archive" size={50} />;
     } else {
   
@@ -46,7 +48,7 @@ const PreviewCard = (props) => {
           <View>
             <Text style={styles.text}>{props.name}</Text>
             <AddTag onPress={_handleAddTagPress}>
-              <AddTagTxt>Add #Tag</AddTagTxt>
+              <AddTagTxt>{props.tag?props.tag:"Add #Tag"}</AddTagTxt>
             </AddTag>
           </View>
         </View>
