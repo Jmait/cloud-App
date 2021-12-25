@@ -1,50 +1,41 @@
-
-
-
-
-
-import React from 'react';
-import {
-  View, StyleSheet,
-  Text, 
-  Platform
-} from 'react-native';
-import styled from 'styled-components';
-import { connect } from 'react-redux';
+import React from "react";
+import { View, StyleSheet, Text, Platform } from "react-native";
+import styled from "styled-components";
+import { connect } from "react-redux";
+import { SimpleLineIcons } from "@expo/vector-icons";
 
 // adb -s 067062514J108514  reverse tcp:8081 tcp:8081
-
-import SubscriptionTabs from '../../components/subscription/SubscriptionTabs';
-
+import SubscriptionTabs from "../../components/subscription/SubscriptionTabs";
+import NewSubPage from "../../components/subscription/NewSubPage";
 
 const SubscriptionScreen = (props) => {
-
   let { darkMode } = props;
 
   return (
-    <View style={{ flex: 1, backgroundColor: darkMode ? 'black' : 'white' }}>
+    <View style={{ flex: 1, backgroundColor: darkMode ? "black" : "white" }}>
       <HeaderContainer>
         <View style={styles.header}>
-          <Text style={styles.title}>Manage Subscription</Text>
-          <View style={styles.line} />
+          <SimpleLineIcons name="arrow-down" size={24} color="white" />
+          <Text style={styles.title}>Subscriptions</Text>
         </View>
       </HeaderContainer>
 
-      <SubscriptionTabs />
-
+      {/* <SubscriptionTabs /> */}
+      <NewSubPage />
     </View>
-  )
-}
+  );
+};
 
 const HeaderContainer = styled.View`
   padding-top: 55px;
-  background-color: ${props => props.theme.PRIMARY_BACKGROUD_COLOR};
-`
+  background-color: ${(props) => props.theme.PRIMARY_BACKGROUD_COLOR};
+`;
 
 const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 25,
     paddingBottom: 30,
+    flexDirection: "row",
   },
 
   title: {
@@ -54,19 +45,13 @@ const styles = StyleSheet.create({
     lineHeight: 28,
     fontStyle: "normal",
     fontFamily: "Helvetica",
-  },
-
-  line: {
-    height: 2,
-    width: "90%",
-    backgroundColor: "white",
-    marginVertical: 10,
-    marginTop: 15,
+    marginLeft: 80,
+    color: "#FF2465",
   },
 });
 
-const mapStateToProps = state => ({
-  darkMode: state.theme.darkMode
+const mapStateToProps = (state) => ({
+  darkMode: state.theme.darkMode,
 });
 
 export default connect(mapStateToProps)(SubscriptionScreen);

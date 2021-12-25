@@ -8,140 +8,145 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import styled from "styled-components";
+// import styled from "styled-components";
 import { Feather, Entypo } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
-import * as InAppPurchases from 'expo-in-app-purchases';
-
-
-
+import * as InAppPurchases from "expo-in-app-purchases";
 
 const TabContent = (props) => {
   let { theme, name } = props;
   const [showFeatures, setShowFeature] = React.useState(false);
-  const [value, setValue] = React.useState(name === "Bundled" ? 5 : name=="Freq"?3:2);
+  const [value, setValue] = React.useState(
+    name === "Bundled" ? 5 : name == "Freq" ? 3 : 2
+  );
   const [connected, setConnected] = React.useState("No");
   const [sliderStep, setSlideStep] = React.useState(1);
 
-  const connectToStore=async()=>{
+  const connectToStore = async () => {
     const myProducts = Platform.select({
       ios: [
-          "frequent_tier_yearly_tst",
-          "FREQUENT_TIER_MONTHLY", 
-          "INFREQUENT_TIER_MONTHLY", 
-          "INFREQUENT_TIER_YEARLY", 
-          "ARCHIVED_TIER_MONTHLY", 
-          "ARCHIVED_TIER_YEARLY"
+        "frequent_tier_yearly_tst",
+        "FREQUENT_TIER_MONTHLY",
+        "INFREQUENT_TIER_MONTHLY",
+        "INFREQUENT_TIER_YEARLY",
+        "ARCHIVED_TIER_MONTHLY",
+        "ARCHIVED_TIER_YEARLY",
       ],
-      android: [
-          "frequent_tier_monthly_tst", 
-          "frequent_tier_yearly_tst" 
-      ],
-  })
-  try {
-    if(connected=="No"){
-      await InAppPurchases.connectAsync();
-      setConnected("Yes");
-      const { responseCode, results } = await InAppPurchases.getProductsAsync(myProducts);
-      setSubcription(results);
-      console.log(`${results} results`);
-      return results;  
-  
-   }
-  } catch (error) {
-    const { responseCode, results } = await InAppPurchases.getProductsAsync(myProducts);
-      setSubcription(results);
-  }
-  }
-  const fetchAvailableSubcription = async () => {
-    const {OK} = InAppPurchases.IAPResponseCode;
+      android: ["frequent_tier_monthly_tst", "frequent_tier_yearly_tst"],
+    });
     try {
-        const myProducts = Platform.select({
-            ios: [
-                "frequent_tier_yearly_tst",
-                "FREQUENT_TIER_MONTHLY", 
-                "INFREQUENT_TIER_MONTHLY", 
-                "INFREQUENT_TIER_YEARLY", 
-                "ARCHIVED_TIER_MONTHLY", 
-                "ARCHIVED_TIER_YEARLY"
-            ],
-            android: [
-                "frequent_tier_monthly_tst", 
-                "frequent_tier_yearly_tst" 
-            ],
-        })
+      if (connected == "No") {
+        await InAppPurchases.connectAsync();
+        setConnected("Yes");
+        const { responseCode, results } = await InAppPurchases.getProductsAsync(
+          myProducts
+        );
+        setSubcription(results);
+        console.log(`${results} results`);
+        return results;
+      }
+    } catch (error) {
+      const { responseCode, results } = await InAppPurchases.getProductsAsync(
+        myProducts
+      );
+      setSubcription(results);
+    }
+  };
+  const fetchAvailableSubcription = async () => {
+    const { OK } = InAppPurchases.IAPResponseCode;
+    try {
+      const myProducts = Platform.select({
+        ios: [
+          "frequent_tier_yearly_tst",
+          "FREQUENT_TIER_MONTHLY",
+          "INFREQUENT_TIER_MONTHLY",
+          "INFREQUENT_TIER_YEARLY",
+          "ARCHIVED_TIER_MONTHLY",
+          "ARCHIVED_TIER_YEARLY",
+        ],
+        android: ["frequent_tier_monthly_tst", "frequent_tier_yearly_tst"],
+      });
 
-      
-      if(connected=="No"){
-       connectToStore()
-      }else if(subscription=="undefined"||subscription==[]){
-        const { responseCode, results } = await InAppPurchases.getProductsAsync(myProducts);
+      if (connected == "No") {
+        connectToStore();
+      } else if (subscription == "undefined" || subscription == []) {
+        const { responseCode, results } = await InAppPurchases.getProductsAsync(
+          myProducts
+        );
         console.log(`${results} results`);
         setSubcription(results);
-        return results;  
+        return results;
       }
-            
-          
+    } catch (error) {
+      // Alert.alert("Success", error.message)
     }
-    catch (error) {
-        // Alert.alert("Success", error.message)
-    }
-}
- const [subscription,setSubcription]= React.useState([]);
-  React.useEffect(async()=>{
- const p =  await  fetchAvailableSubcription();
-   purchasListner();
-   setSubcription(p);
-   console.log(subscription);
-   //subscription is an array of products...... which users can subcribe to
- },[]);
-//  Choose your price. Our user-first commitment doesn't stop at
-//  storage or privacy. Choose and pay what you think is fair.
-const purchasListner=()=>{
- InAppPurchases.setPurchaseListener(({ responseCode, results, errorCode }) => {
-    // Purchase was successful
-    // C:\Program Files (x86)\Android\platform-tools_r31.0.3-windows\platform-tools
-    if (responseCode === InAppPurchases.IAPResponseCode.OK) {
-      results.forEach(purchase => {
-        if (!purchase.acknowledged) {
-          console.log(`Successfully purchased ${purchase.productId}`);
-          Alert.alert("Success", "Purchase is successful");
-          InAppPurchases.finishTransactionAsync(purchase, true);
+  };
+  const [subscription, setSubcription] = React.useState([]);
+  React.useEffect(async () => {
+    const p = await fetchAvailableSubcription();
+    purchasListner();
+    setSubcription(p);
+    console.log(subscription);
+    //subscription is an array of products...... which users can subcribe to
+  }, []);
+  //  Choose your price. Our user-first commitment doesn't stop at
+  //  storage or privacy. Choose and pay what you think is fair.
+  const purchasListner = () => {
+    InAppPurchases.setPurchaseListener(
+      ({ responseCode, results, errorCode }) => {
+        // Purchase was successful
+        // C:\Program Files (x86)\Android\platform-tools_r31.0.3-windows\platform-tools
+        if (responseCode === InAppPurchases.IAPResponseCode.OK) {
+          results.forEach((purchase) => {
+            if (!purchase.acknowledged) {
+              console.log(`Successfully purchased ${purchase.productId}`);
+              Alert.alert("Success", "Purchase is successful");
+              InAppPurchases.finishTransactionAsync(purchase, true);
+            }
+          });
+        } else if (
+          responseCode === InAppPurchases.IAPResponseCode.USER_CANCELED
+        ) {
+          Alert.alert("Error", "Transaction canceled");
+        } else if (responseCode === InAppPurchases.IAPResponseCode.DEFERRED) {
+          console.log(
+            "User does not have permissions to buy but requested parental approval (iOS only)"
+          );
+        } else {
+          Alert.alert(
+            `Error","Purchase can not be completed at the moment ${errorCode}`
+          );
         }
-      });
-    } else if (responseCode === InAppPurchases.IAPResponseCode.USER_CANCELED) {
-      Alert.alert("Error", "Transaction canceled")
-    } else if (responseCode === InAppPurchases.IAPResponseCode.DEFERRED) {
-      console.log('User does not have permissions to buy but requested parental approval (iOS only)');
-    } else {
-      Alert.alert(`Error","Purchase can not be completed at the moment ${errorCode}`);
-    }
-  });
-}
-const makePurchases =(product_id)=>{
-  try {
-     subscription.forEach(async(sub,index)=>{
-       InAppPurchases.setPurchaseListener()
-       console.log(product_id[0].toLowerCase());
-       if (sub.priceAmountMicros==1234875176&&sub.productId[0]==product_id[0].toLowerCase()) {
-        
-         try {
+      }
+    );
+  };
+  const makePurchases = (product_id) => {
+    try {
+      subscription.forEach(async (sub, index) => {
+        InAppPurchases.setPurchaseListener();
+        console.log(product_id[0].toLowerCase());
+        if (
+          sub.priceAmountMicros == 1234875176 &&
+          sub.productId[0] == product_id[0].toLowerCase()
+        ) {
+          try {
+            purchasListner();
+            await InAppPurchases.purchaseItemAsync(sub.productId);
+          } catch (error) {
+            Alert.alert("Error", error.message);
+          }
+        } else if (
+          sub.priceAmountMicros == 24000 &&
+          sub.productId[0] == product_id[0]
+        ) {
           purchasListner();
           await InAppPurchases.purchaseItemAsync(sub.productId);
-        
-         } catch (error) {
-          Alert.alert("Error", error.message);
-         }
-       }else if(sub.priceAmountMicros==24000&&sub.productId[0]==product_id[0]){
-        purchasListner();
-        await InAppPurchases.purchaseItemAsync(sub.productId);
-     
-       }       
-     });
-  } catch (error) {
-    Alert.alert("Error", error.message);
-  }
-}
+        }
+      });
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -199,18 +204,23 @@ const makePurchases =(product_id)=>{
           <View style={styles.descriptionView}>
             <Text style={styles.featureTxt}>Pay what you think is fair.</Text>
             <Text style={{ color: "white" }}>
-               {value>3&&value>5?`Slide to the end to select a yearly plan`:`You have selected to pay Monthly at $${value}/Month`}
+              {value > 3 && value > 5
+                ? `Slide to the end to select a yearly plan`
+                : `You have selected to pay Monthly at $${value}/Month`}
             </Text>
           </View>
         )}
         <View style={styles.priceView}>
-          <Text style={styles.featureTxt}>${value>3&&value>5?`${value}/Year`:`${value}/mo`}</Text>
+          <Text style={styles.featureTxt}>
+            ${value > 3 && value > 5 ? `${value}/Year` : `${value}/mo`}
+          </Text>
           <Slider
-            
             value={value}
             style={{ width: "100%", height: 50 }}
-            minimumValue={name === "Bundled" ? 5 : name=="Freq"? 3 : 2}
-            maximumValue={name=="Freq"? 24.99 :name=="Bundled"? 59.99 : 20}
+            minimumValue={name === "Bundled" ? 5 : name == "Freq" ? 3 : 2}
+            maximumValue={
+              name == "Freq" ? 24.99 : name == "Bundled" ? 59.99 : 20
+            }
             minimumTrackTintColor="#FFFFFF"
             maximumTrackTintColor="#000000"
             thumbTintColor="white"
@@ -218,7 +228,12 @@ const makePurchases =(product_id)=>{
             // onValueChange={_handleSliderChange}
             step={sliderStep}
           />
-          <TouchableOpacity style={styles.continueBtn} onPress={()=>{makePurchases(props.name)}}>
+          <TouchableOpacity
+            style={styles.continueBtn}
+            onPress={() => {
+              makePurchases(props.name);
+            }}
+          >
             <Text
               style={[
                 styles.featureTxt,
