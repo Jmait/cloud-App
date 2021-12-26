@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Button } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
 function NewSubPage() {
   const [state, setState] = useState(true);
@@ -54,9 +54,9 @@ function NewSubPage() {
           <Text style={styles.kind}>Pay monthly. Cancel anytime.</Text>
         </TouchableOpacity>
 
-        <View style={styles.btnSection}>
-          <Button title="Purchase" color="#FF2465" />
-        </View>
+        <TouchableOpacity style={styles.btnSection}>
+          <Text style={{ color: "#fff", fontWeight: "700" }}>Purchase</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -69,10 +69,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     flex: 1,
     backgroundColor: "#1D2026",
-  },
-
-  titleContainer: {
-    // flex: 2,
   },
 
   title: {
@@ -96,7 +92,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     marginTop: 40,
-    // height: "80%",
     flex: 1,
   },
 
@@ -139,5 +134,9 @@ const styles = StyleSheet.create({
 
   btnSection: {
     marginTop: 60,
+    borderRadius: 50,
+    backgroundColor: "#FF2465",
+    paddingHorizontal: 18,
+    paddingVertical: 10,
   },
 });
