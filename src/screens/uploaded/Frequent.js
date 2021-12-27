@@ -53,6 +53,9 @@ function UploadedScreen({ route, navigation, darkMode }) {
     setCounter(1800);
   };
 
+  // check loading of the content to be displayed
+  const [loadItem, setLoadItem] = useState(true);
+
   let client_secret;
   React.useEffect(async () => {
     getServerSecret();
@@ -71,6 +74,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
         if (response && response.data) {
           // console.log(response.data.msg);
           setServerSecret(response.data.msg);
+          setLoadItem(false);
         }
       })
       .catch((err) => {
@@ -310,29 +314,28 @@ function UploadedScreen({ route, navigation, darkMode }) {
                     uploadedFiles.map((val, i) => {
                       return (
                         <View style={styles.gridCard} key={i}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              setIsVisible(!visible);
-                              setData(val);
-                            }}
-                          >
-                            <View>
-                              {/* {
-                                if (val.fileType === "image/jpg") {
+                          {loadItem ? (
+                            <Text>Loading...</Text>
+                          ) : (
+                            <TouchableOpacity
+                              onPress={() => {
+                                setIsVisible(!visible);
+                                setData(val);
+                              }}
+                            >
+                              <View>
+                                {val.fileType === "image/jpg" ? (
                                   <Image
-                                  source={require("../../assets/image.jpeg")}
-                                />
-                                } else {
-                                  
-                                }
-                              } */}
-                              {val.fileType === "image/jpg" ? (
-                                <Image
-                                  source={require("../../assets/image.jpeg")}
-                                />
-                              ) : null}
-                            </View>
-                            {/* <Image
+                                    source={require("../../assets/image.jpeg")}
+                                    style={{
+                                      width: "100%",
+                                      height: 80,
+                                      // resizeMode: "stretch",
+                                    }}
+                                  />
+                                ) : null}
+                              </View>
+                              {/* <Image
                               source={{
                                 uri: `${BASE_URL}data/image?key=${val.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
                               }}
@@ -342,25 +345,26 @@ function UploadedScreen({ route, navigation, darkMode }) {
                                 resizeMode: "stretch",
                               }}
                             /> */}
-                            <Text
-                              style={{
-                                ...styles.description,
-                                color: darkMode ? "white" : "#1D2026",
-                              }}
-                            >
-                              {val.fileName}
-                            </Text>
-                            <LockButton style={{ width: 90 }}>
                               <Text
-                                style={[
-                                  styles.description,
-                                  { fontSize: 13, color: "white" },
-                                ]}
+                                style={{
+                                  ...styles.description,
+                                  color: darkMode ? "white" : "#1D2026",
+                                }}
                               >
-                                #{val.tag}
+                                {val.fileName}
                               </Text>
-                            </LockButton>
-                          </TouchableOpacity>
+                              <LockButton style={{ width: 90 }}>
+                                <Text
+                                  style={[
+                                    styles.description,
+                                    { fontSize: 13, color: "white" },
+                                  ]}
+                                >
+                                  #{val.tag}
+                                </Text>
+                              </LockButton>
+                            </TouchableOpacity>
+                          )}
                         </View>
                       );
                     })
