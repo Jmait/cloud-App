@@ -1,5 +1,11 @@
 import React from "react";
-import { View, StyleSheet, Text, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Platform,
+  TouchableOpacity,
+} from "react-native";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { SimpleLineIcons } from "@expo/vector-icons";
@@ -8,14 +14,20 @@ import { SimpleLineIcons } from "@expo/vector-icons";
 import SubscriptionTabs from "../../components/subscription/SubscriptionTabs";
 import NewSubPage from "../../components/subscription/NewSubPage";
 
-const SubscriptionScreen = (props) => {
-  let { darkMode } = props;
+const SubscriptionScreen = ({ navigation, darkMode }) => {
+  // let { darkMode } = props;
 
   return (
     <View style={{ flex: 1, backgroundColor: darkMode ? "black" : "white" }}>
       <HeaderContainer>
         <View style={styles.header}>
-          <SimpleLineIcons name="arrow-down" size={24} color="white" />
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={{ paddingHorizontal: 10 }}
+          >
+            <SimpleLineIcons name="arrow-down" size={24} color="white" />
+          </TouchableOpacity>
+
           <Text style={styles.title}>Subscriptions</Text>
         </View>
       </HeaderContainer>

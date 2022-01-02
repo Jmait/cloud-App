@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomColor: "#ffffff",
-    borderBottomWidth: 5,
+    borderBottomWidth: 1,
   },
 
   info: {

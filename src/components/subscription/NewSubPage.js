@@ -6,7 +6,6 @@ function NewSubPage() {
 
   const handlePress = () => {
     setState(!state);
-    console.log("changed");
   };
 
   return (

@@ -20,10 +20,8 @@ const PreviewCard = (props) => {
     const files = [".docx", ".doc"];
     const images = [".jpeg", ".jpg"];
     if (new RegExp(files.join("|")).test(props.name)) {
-     
       return <MaterialIcons name="archive" size={50} />;
     } else {
-  
       return (
         <View>
           <Image source={{ uri: props.uri }} style={styles.img} />
@@ -48,11 +46,11 @@ const PreviewCard = (props) => {
           <View>
             <Text style={styles.text}>{props.name}</Text>
             <AddTag onPress={_handleAddTagPress}>
-              <AddTagTxt>{props.tag?props.tag:"Add #Tag"}</AddTagTxt>
+              <AddTagTxt>{props.tag ? props.tag : "Add #Tag"}</AddTagTxt>
             </AddTag>
           </View>
         </View>
-      
+
         <View style={{ width: "20%" }}>
           <Text style={styles.text}>
             {props.size

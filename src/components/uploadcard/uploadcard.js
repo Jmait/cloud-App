@@ -26,7 +26,7 @@ function UploadCard(props) {
   };
 
   let { theme } = props;
-console.log(props.files);
+  console.log(props.files);
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: "frequent", title: "Frequent" },
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => ({
   theme: state.theme.theme,
-  storageClass: state.files.storageClass
+  storageClass: state.files.storageClass,
 });
 
 export default connect(mapStateToProps)(UploadCard);

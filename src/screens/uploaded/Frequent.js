@@ -58,10 +58,8 @@ function UploadedScreen({ route, navigation, darkMode }) {
 
   let client_secret;
   React.useEffect(async () => {
-    setTimeout(() => {
-      getServerSecret();
-      getFiles();
-    }, 2000);
+    getServerSecret();
+    getFiles();
   }, []);
 
   const getServerSecret = async () => {
@@ -205,7 +203,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
           </View>
         </View>
         <View style={[styles.body]}>
-          {isLoading ? (
+          {/* {isLoading ? (
             <View
               style={{
                 height: "50%",
@@ -214,221 +212,219 @@ function UploadedScreen({ route, navigation, darkMode }) {
               }}
             >
               <Image
-                source={{
-                  uri: `https://acegif.com/wp-content/uploads/loading-76.gif`,
-                }}
+                source={require("./../../assets/load.gif")}
                 style={{
-                  width: "100%",
+                  width: 200,
                   height: 200,
                   resizeMode: "stretch",
                 }}
               />
             </View>
-          ) : (
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={styles.cardContainer}>
-                {view ? (
-                  <View style={styles.list}>
-                    <View style={styles.row}>
-                      <Text
-                        style={[
-                          styles.heading,
-                          { color: darkMode ? "white" : "#1D2026" },
-                        ]}
-                      >
-                        Name
-                      </Text>
-                      <Text
-                        style={[
-                          styles.heading,
-                          { color: darkMode ? "white" : "#1D2026" },
-                        ]}
-                      >
-                        Tag
-                      </Text>
-                      <Text
-                        style={[
-                          styles.heading,
-                          { color: darkMode ? "white" : "#1D2026" },
-                        ]}
-                      >
-                        Type
-                      </Text>
-                      <Text
-                        style={[
-                          styles.heading,
-                          { color: darkMode ? "white" : "#1D2026" },
-                        ]}
-                      >
-                        Size
-                      </Text>
-                    </View>
-                    {isLoading ? (
-                      <ActivityIndicator />
-                    ) : (
-                      uploadedFiles &&
-                      uploadedFiles.map((val, i) => {
-                        return (
-                          <View key={i}>
-                            <View style={styles.row}>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  setIsVisible(!visible);
-                                  setData(val);
-                                }}
-                                style={{ width: "25%" }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.name,
-                                    {
-                                      width: "100%",
-                                      color: darkMode ? "white" : "#1D2026",
-                                    },
-                                  ]}
-                                >
-                                  {val.fileName}
-                                </Text>
-                              </TouchableOpacity>
-                              <Tag>
-                                <Text style={{ color: "white" }}>{i}</Text>
-                              </Tag>
-                              <Text
-                                style={[
-                                  styles.name,
-                                  { color: darkMode ? "white" : "#1D2026" },
-                                ]}
-                              >
-                                {val.fileType}
-                              </Text>
-                              <Text
-                                style={[
-                                  styles.name,
-                                  { color: darkMode ? "white" : "#1D2026" },
-                                ]}
-                              >
-                                {val.fileSize}
-                              </Text>
-                            </View>
-
-                            <View
-                              style={[
-                                styles.line,
-                                {
-                                  height: 1,
-                                  width: "100%",
-                                  marginHorizontal: 10,
-                                },
-                              ]}
-                            />
-                          </View>
-                        );
-                      })
-                    )}
+          ) : ( */}
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.cardContainer}>
+              {view ? (
+                <View style={styles.list}>
+                  <View style={styles.row}>
+                    <Text
+                      style={[
+                        styles.heading,
+                        { color: darkMode ? "white" : "#1D2026" },
+                      ]}
+                    >
+                      Name
+                    </Text>
+                    <Text
+                      style={[
+                        styles.heading,
+                        { color: darkMode ? "white" : "#1D2026" },
+                      ]}
+                    >
+                      Tag
+                    </Text>
+                    <Text
+                      style={[
+                        styles.heading,
+                        { color: darkMode ? "white" : "#1D2026" },
+                      ]}
+                    >
+                      Type
+                    </Text>
+                    <Text
+                      style={[
+                        styles.heading,
+                        { color: darkMode ? "white" : "#1D2026" },
+                      ]}
+                    >
+                      Size
+                    </Text>
                   </View>
-                ) : (
-                  <View style={styles.grid}>
-                    {isLoading ? (
-                      <ActivityIndicator />
-                    ) : (
-                      uploadedFiles &&
-                      uploadedFiles.map((val, i) => {
-                        return (
-                          <View style={styles.gridCard} key={i}>
-                            {isLoading ? (
-                              <Image
-                                source={require("../../assets/image.jpeg")}
-                                style={{
-                                  width: "100%",
-                                  height: 80,
-                                  resizeMode: "stretch",
-                                }}
-                              />
-                            ) : (
-                              <TouchableOpacity
-                                onPress={() => {
-                                  setIsVisible(!visible);
-                                  setData(val);
-                                }}
+                  {isLoading ? (
+                    <ActivityIndicator />
+                  ) : (
+                    uploadedFiles &&
+                    uploadedFiles.map((val, i) => {
+                      return (
+                        <View key={i}>
+                          <View style={styles.row}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                setIsVisible(!visible);
+                                setData(val);
+                              }}
+                              style={{ width: "25%" }}
+                            >
+                              <Text
+                                style={[
+                                  styles.name,
+                                  {
+                                    width: "100%",
+                                    color: darkMode ? "white" : "#1D2026",
+                                  },
+                                ]}
                               >
-                                {/* Check for image types and render them */}
-                                <View>
-                                  {val.fileType === "image/jpg" ? (
-                                    <Image
-                                      source={{
-                                        uri: `${BASE_URL}data/image?key=${val.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
-                                      }}
-                                      style={{
-                                        width: "100%",
-                                        height: 80,
-                                        resizeMode: "stretch",
-                                      }}
-                                    />
-                                  ) : (
-                                    <Image
-                                      source={require("../../assets/image.jpeg")}
-                                      style={{
-                                        width: "100%",
-                                        height: 80,
-                                        resizeMode: "stretch",
-                                      }}
-                                    />
-                                  )}
-                                </View>
-                                <View>
-                                  {val.fileType === "image/png" ? (
-                                    <Image
-                                      source={require("../../assets/image.jpeg")}
-                                      style={{
-                                        width: "100%",
-                                        height: 80,
-                                        resizeMode: "stretch",
-                                      }}
-                                    />
-                                  ) : null}
-                                </View>
-                                <View>
-                                  {val.fileType === "image/gif" ? (
-                                    <Image
-                                      source={require("../../assets/image.jpeg")}
-                                      style={{
-                                        width: "100%",
-                                        height: 80,
-                                        resizeMode: "stretch",
-                                      }}
-                                    />
-                                  ) : null}
-                                </View>
+                                {val.fileName}
+                              </Text>
+                            </TouchableOpacity>
+                            <Tag>
+                              <Text style={{ color: "white" }}>{i}</Text>
+                            </Tag>
+                            <Text
+                              style={[
+                                styles.name,
+                                { color: darkMode ? "white" : "#1D2026" },
+                              ]}
+                            >
+                              {val.fileType}
+                            </Text>
+                            <Text
+                              style={[
+                                styles.name,
+                                { color: darkMode ? "white" : "#1D2026" },
+                              ]}
+                            >
+                              {val.fileSize}
+                            </Text>
+                          </View>
 
-                                {/* Check for the audio and render */}
-                                <View>
-                                  {val.fileType === "audio/mp3" ? (
-                                    <Image
-                                      source={require("../../assets/audio.jpeg")}
-                                      style={{
-                                        width: "100%",
-                                        height: 80,
-                                        resizeMode: "stretch",
-                                      }}
-                                    />
-                                  ) : null}
-                                </View>
+                          <View
+                            style={[
+                              styles.line,
+                              {
+                                height: 1,
+                                width: "100%",
+                                marginHorizontal: 10,
+                              },
+                            ]}
+                          />
+                        </View>
+                      );
+                    })
+                  )}
+                </View>
+              ) : (
+                <View style={styles.grid}>
+                  {isLoading ? (
+                    <ActivityIndicator />
+                  ) : (
+                    uploadedFiles &&
+                    uploadedFiles.map((val, i) => {
+                      return (
+                        <View style={styles.gridCard} key={i}>
+                          {isLoading ? (
+                            <Image
+                              source={require("../../assets/image.jpeg")}
+                              style={{
+                                width: "100%",
+                                height: 80,
+                                resizeMode: "stretch",
+                              }}
+                            />
+                          ) : (
+                            <TouchableOpacity
+                              onPress={() => {
+                                setIsVisible(!visible);
+                                setData(val);
+                              }}
+                            >
+                              {/* Check for image types and render them */}
+                              <View>
+                                {val.fileType === "image/jpg" ? (
+                                  <Image
+                                    source={{
+                                      uri: `${BASE_URL}data/image?key=${val.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
+                                    }}
+                                    style={{
+                                      width: "100%",
+                                      height: 80,
+                                      resizeMode: "stretch",
+                                    }}
+                                  />
+                                ) : (
+                                  <Image
+                                    source={require("../../assets/image.jpeg")}
+                                    style={{
+                                      width: "100%",
+                                      height: 80,
+                                      resizeMode: "stretch",
+                                    }}
+                                  />
+                                )}
+                              </View>
+                              <View>
+                                {val.fileType === "image/png" ? (
+                                  <Image
+                                    source={require("../../assets/image.jpeg")}
+                                    style={{
+                                      width: "100%",
+                                      height: 80,
+                                      resizeMode: "stretch",
+                                    }}
+                                  />
+                                ) : null}
+                              </View>
+                              <View>
+                                {val.fileType === "image/gif" ? (
+                                  <Image
+                                    source={require("../../assets/image.jpeg")}
+                                    style={{
+                                      width: "100%",
+                                      height: 80,
+                                      resizeMode: "stretch",
+                                    }}
+                                  />
+                                ) : null}
+                              </View>
 
-                                {/* Check for the video and render */}
-                                <View>
-                                  {val.fileType === "video/mp4" ? (
-                                    <Image
-                                      source={require("../../assets/video.jpeg")}
-                                      style={{
-                                        width: "100%",
-                                        height: 80,
-                                        resizeMode: "stretch",
-                                      }}
-                                    />
-                                  ) : null}
-                                </View>
+                              {/* Check for the audio and render */}
+                              <View>
+                                {val.fileType === "audio/mp3" ? (
+                                  <Image
+                                    source={require("../../assets/audio.jpeg")}
+                                    style={{
+                                      width: "100%",
+                                      height: 80,
+                                      resizeMode: "stretch",
+                                    }}
+                                  />
+                                ) : null}
+                              </View>
 
-                                {/* <Image
+                              {/* Check for the video and render */}
+                              <View>
+                                {val.fileType === "video/mp4" ? (
+                                  <Image
+                                    source={require("../../assets/video.jpeg")}
+                                    style={{
+                                      width: "100%",
+                                      height: 80,
+                                      resizeMode: "stretch",
+                                    }}
+                                  />
+                                ) : null}
+                              </View>
+
+                              {/* <Image
                       source={{
                         uri: `${BASE_URL}data/image?key=${val.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
                       }}
@@ -438,75 +434,75 @@ function UploadedScreen({ route, navigation, darkMode }) {
                         resizeMode: "stretch",
                       }}
                     /> */}
+                              <Text
+                                style={{
+                                  ...styles.description,
+                                  color: darkMode ? "white" : "#1D2026",
+                                }}
+                              >
+                                {val.fileName}
+                              </Text>
+                              <LockButton style={{ width: 90 }}>
                                 <Text
-                                  style={{
-                                    ...styles.description,
-                                    color: darkMode ? "white" : "#1D2026",
-                                  }}
+                                  style={[
+                                    styles.description,
+                                    { fontSize: 13, color: "white" },
+                                  ]}
                                 >
-                                  {val.fileName}
+                                  #{val.tag}
                                 </Text>
-                                <LockButton style={{ width: 90 }}>
-                                  <Text
-                                    style={[
-                                      styles.description,
-                                      { fontSize: 13, color: "white" },
-                                    ]}
-                                  >
-                                    #{val.tag}
-                                  </Text>
-                                </LockButton>
-                              </TouchableOpacity>
-                            )}
-                          </View>
-                        );
-                      })
-                    )}
-                  </View>
-                )}
-              </View>
+                              </LockButton>
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      );
+                    })
+                  )}
+                </View>
+              )}
+            </View>
 
-              <ImageView
-                backgroundColor="rgba(0,0,0,0.4)"
-                images={[
-                  {
-                    uri: `${BASE_URL}data/image?key=${data.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
-                  },
-                ]}
-                imageIndex={0}
-                visible={visible}
-                FooterComponent={() => (
-                  <ImageViewFooter>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={async () => {
-                        downloadImageLocally(
-                          `${BASE_URL}data/image?key=${data.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
-                          data
-                        );
-                      }}
-                    >
-                      <AntDesign name="download" size={24} color="#1D2026" />
-                    </TouchableOpacity>
-                    <Tag>
-                      <Text style={{ color: "white", fontSize: 14 }}>
-                        #{data.tag}
-                      </Text>
-                    </Tag>
-                    {/* Modal for Adding Tag */}
+            <ImageView
+              backgroundColor="rgba(0,0,0,0.4)"
+              images={[
+                {
+                  uri: `${BASE_URL}data/image?key=${data.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
+                },
+              ]}
+              imageIndex={0}
+              visible={visible}
+              FooterComponent={() => (
+                <ImageViewFooter>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={async () => {
+                      downloadImageLocally(
+                        `${BASE_URL}data/image?key=${data.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
+                        data
+                      );
+                    }}
+                  >
+                    <AntDesign name="download" size={24} color="#1D2026" />
+                  </TouchableOpacity>
+                  <Tag>
+                    <Text style={{ color: "white", fontSize: 14 }}>
+                      #{data.tag}
+                    </Text>
+                  </Tag>
+                  {/* Modal for Adding Tag */}
 
-                    <TouchableOpacity onPress={() => setShowModal(true)}>
-                      <OptionIcon name="dots-three-horizontal" />
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.6}>
-                      <AntDesign name="delete" size={24} color="#1D2026" />
-                    </TouchableOpacity>
-                  </ImageViewFooter>
-                )}
-                onRequestClose={() => setIsVisible(false)}
-              />
-            </ScrollView>
-          )}
+                  <TouchableOpacity onPress={() => setShowModal(true)}>
+                    <OptionIcon name="dots-three-horizontal" />
+                  </TouchableOpacity>
+                  <TouchableOpacity activeOpacity={0.6}>
+                    <AntDesign name="delete" size={24} color="#1D2026" />
+                  </TouchableOpacity>
+                </ImageViewFooter>
+              )}
+              onRequestClose={() => setIsVisible(false)}
+            />
+          </ScrollView>
+          {/* )} */}
 
           <Modal
             isVisible={showModal}

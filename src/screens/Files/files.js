@@ -71,6 +71,7 @@ const config = {
 function HomeScreen(props) {
   const [active, setActive] = React.useState("Home");
   const [pkg, setPkg] = React.useState("Frequent");
+  const [open, setOpen] = React.useState(false);
 
   const [info, setInfo] = React.useState({
     key: "frequent",
@@ -216,19 +217,35 @@ function HomeScreen(props) {
         <View style={styles.body}>
           <Filecard getPkg={(val) => setInfo(val)} />
 
-          <View style={styles.buttonContainer}>
+          <View style={[styles.buttonContainer, { position: "relative" }]}>
             <TouchableOpacity
               activeOpacity={0.6}
               style={styles.button}
-              onPress={() =>{
-                navigation.navigate(info.title, { name: info.key })
-              }
-            }
+              onPress={() => {
+                setOpen(true);
+                setTimeout(() => {
+                  navigation.navigate(info.title, { name: info.key });
+                  setOpen(false);
+                }, 2500);
+              }}
             >
               <Text style={[styles.text, { color: theme.PRIMARY_TEXT_COLOR }]}>
                 Unlock Vault
               </Text>
             </TouchableOpacity>
+
+            {open ? (
+              <Image
+                source={require("./../../assets/load.gif")}
+                style={{
+                  width: 200,
+                  height: 200,
+                  resizeMode: "stretch",
+                  marginBottom: 200,
+                  position: "absolute",
+                }}
+              />
+            ) : null}
           </View>
         </View>
       </View>

@@ -32,7 +32,7 @@ function UploadScreen(props) {
     key: "frequent",
     title: "Frequent",
   });
-// console.log(props.storageClass);
+  // console.log(props.storageClass);
   const _handleAddTagPress = () => {
     setShowModal(true);
   };
@@ -53,44 +53,48 @@ function UploadScreen(props) {
         break;
     }
   };
-  
+
   const uploadAllFilesInQueue = async () => {
     const token = await AsyncStorage.getItem("token");
     const client_secret = await AsyncStorage.getItem("secret");
     if (props.files.length > 0) {
-     try {
-       setUploading(true);
-      props.files.map(async (file) => {
-        const  formData = new FormData();
-        const filesNames = [".docx", ".doc"];
-        if (new RegExp(filesNames.join("|")).test(file.uri)) {
-          formData.append("file", file);
-        } else {
-          
-          formData.append("file", {
-            uri: file.uri,
-            type: "image/jpg",
-            name: "image.jpg",
-            originalname: "image.jpg",
+      try {
+        setUploading(true);
+        props.files.map(async (file) => {
+          const formData = new FormData();
+          const filesNames = [".docx", ".doc"];
+          if (new RegExp(filesNames.join("|")).test(file.uri)) {
+            formData.append("file", file);
+          } else {
+            formData.append("file", {
+              uri: file.uri,
+              type: "image/jpg",
+              name: "image.jpg",
+              originalname: "image.jpg",
+            });
+          }
+          console.log(getStorageClass());
+          formData.append("tag", tag);
+          formData.append("client_secret", client_secret);
+          formData.append("storageClass", getStorageClass());
+          const res = await apiRequest({
+            method: "POST",
+            body: formData,
+            url: `${BASE_URL}data/upload-file`,
+            Authorization: `Bearer ${token}`,
           });
-        }
-        console.log(getStorageClass());
-        formData.append("tag", tag);
-        formData.append("client_secret", client_secret);
-        formData.append("storageClass",getStorageClass());
-      const res =   await apiRequest({method:"POST", body:formData, url:`${BASE_URL}data/upload-file`, Authorization:`Bearer ${token}`})
-      if (res.status==200) {
-        Alert.alert("Success", res.data.msg)
-        setUploading(false)
-      } else {
-        Alert.alert("Error", "File not successfully uploaded");
-        setUploading(false)
+          if (res.status == 200) {
+            Alert.alert("Success", res.data.msg);
+            setUploading(false);
+          } else {
+            Alert.alert("Error", "File not successfully uploaded");
+            setUploading(false);
+          }
+        });
+      } catch (error) {
+        Alert.alert("Error", error.message);
+        setUploading(false);
       }
-      })
-     } catch (error) {
-       Alert.alert("Error",error.message);
-       setUploading(false)
-     }
     } else {
       Alert.alert("Please select one or more file to continue");
     }
@@ -121,7 +125,7 @@ function UploadScreen(props) {
                 <PreviewCard
                   _handleAddTagPress={_handleAddTagPress}
                   theme={props.theme}
-                  tag= {tag}
+                  tag={tag}
                   name={item.name ? item.name : item.filename}
                   size={item.size}
                   height={item.height}
@@ -177,7 +181,9 @@ function UploadScreen(props) {
                 ]}
                 activeOpacity={0.7}
               >
-               <Text style={styles.modalLoginText}>{uploading?"Please wait...":"Upload"}</Text>
+                <Text style={styles.modalLoginText}>
+                  {uploading ? "Please wait..." : "Upload"}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -209,14 +215,18 @@ function UploadScreen(props) {
             </TouchableOpacity>
             <TextInput
               placeholder="Enter a new tag..."
-              onChangeText={(text)=>{SetTag(text)}}
+              onChangeText={(text) => {
+                SetTag(text);
+              }}
               placeholderTextColor="white"
               style={styles.input}
             />
 
             <View style={styles.modalTagView}>
               <Tag>
-                <Text style={{ color: "white" }}>{tag==""? "No tag":tag}</Text>
+                <Text style={{ color: "white" }}>
+                  {tag == "" ? "No tag" : tag}
+                </Text>
               </Tag>
 
               <View
