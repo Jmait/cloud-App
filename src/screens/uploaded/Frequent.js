@@ -82,7 +82,6 @@ function UploadedScreen({ route, navigation, darkMode }) {
   };
 
   const getFiles = async () => {
-    console.log("i am called");
     const token = await AsyncStorage.getItem("token");
     const client_secret = await AsyncStorage.getItem("secret");
     setClientSecret(client_secret);
