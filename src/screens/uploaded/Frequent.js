@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   View,
@@ -28,7 +27,7 @@ import { connect } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { apiRequest, BASE_URL } from "../../helpers/constants";
-import CountDown from 'react-native-countdown-component';
+import CountDown from "react-native-countdown-component";
 import { downloadImageLocally } from "./image-downloader";
 import Modal from "react-native-modal";
 
@@ -42,26 +41,22 @@ function UploadedScreen({ route, navigation, darkMode }) {
   const [counter, setCounter] = React.useState(1800);
   const [timer, setTime] = React.useState(60 * 29 + 59);
   const [uploadedFiles, setUploadedFiles] = React.useState([]);
-  
-  const [isLoading, setLoading] = React.useState(true);
-  const [showModal, setShowModal]= React.useState(false);
-  const [tag, SetTag] = React.useState("");
-   const [id, setId]= React.useState(0);
-   const [secret,setClientSecret] = React.useState('')
-   const [serverSecret, setServerSecret] = React.useState('');
-  const _handleResetPress = () => {
-   
 
-    setId(Math.random())
+  const [isLoading, setLoading] = React.useState(true);
+  const [showModal, setShowModal] = React.useState(false);
+  const [tag, SetTag] = React.useState("");
+  const [id, setId] = React.useState(0);
+  const [secret, setClientSecret] = React.useState("");
+  const [serverSecret, setServerSecret] = React.useState("");
+  const _handleResetPress = () => {
+    setId(Math.random());
     setCounter(1800);
   };
-  
+
   let client_secret;
-  React.useEffect(async() => {
+  React.useEffect(async () => {
     getServerSecret();
     getFiles();
-  
-    
   }, []);
 
   const getServerSecret = async () => {
@@ -75,17 +70,17 @@ function UploadedScreen({ route, navigation, darkMode }) {
       .then((response) => {
         if (response && response.data) {
           //  console.log(response.data.msg);
-           setServerSecret(response.data.msg);
+          setServerSecret(response.data.msg);
         }
-      }).catch((err)=>{
-        Alert.alert("Error",err.response.data.msg)
       })
+      .catch((err) => {
+        Alert.alert("Error", err.response.data.msg);
+      });
   };
 
   const getFiles = async () => {
-    console.log("i am called");
     const token = await AsyncStorage.getItem("token");
-    const   client_secret =await  AsyncStorage.getItem("secret");
+    const client_secret = await AsyncStorage.getItem("secret");
     setClientSecret(client_secret);
     axios
       .get(BASE_URL + "data/files/frequent", {
@@ -93,37 +88,43 @@ function UploadedScreen({ route, navigation, darkMode }) {
           Authorization: `Bearer ${token}`,
         },
       })
-      .then(async(response) => {
+      .then(async (response) => {
         if (response && response.data) {
-       console.log(response);
+          console.log(response);
           setUploadedFiles(response.data.frequent);
           setLoading(false);
         }
-      }).catch((err)=>{
-        Alert.alert("Error",err.response.data.msg)
       })
+      .catch((err) => {
+        Alert.alert("Error", err.response.data.msg);
+      });
   };
 
-  
-  
-  const  RenameTag =async(file)=>{
+  const RenameTag = async (file) => {
     try {
       setTagRenaming(true);
-     const token =await AsyncStorage.getItem("token");
-       const  response = await apiRequest({method:"PUT", url:`${BASE_URL}data/rename-tag`,body:{id:file.id,tag}, Authorization:`Bearer ${token}`});
-       if(response){
-         setShowModal(false);
-         setTagRenaming(false);
-         Alert.alert("Success","Your file tag has been successfully updated.Please referesh the page")
-       }
+      const token = await AsyncStorage.getItem("token");
+      const response = await apiRequest({
+        method: "PUT",
+        url: `${BASE_URL}data/rename-tag`,
+        body: { id: file.id, tag },
+        Authorization: `Bearer ${token}`,
+      });
+      if (response) {
+        setShowModal(false);
+        setTagRenaming(false);
+        Alert.alert(
+          "Success",
+          "Your file tag has been successfully updated.Please referesh the page"
+        );
+      }
     } catch (error) {
       setTagRenaming(false);
       setShowModal(false);
       Alert.alert("Error", error.message);
     }
-  }
+  };
 
-     
   return (
     <View style={styles.container}>
       <MenuContainer>
@@ -146,7 +147,18 @@ function UploadedScreen({ route, navigation, darkMode }) {
           </Row>
 
           <Row style={{ justifyContent: "space-between" }}>
-          <LockTxt style={{ fontSize: 25 }}><CountDown  id={`${id}`} digitStyle={{backgroundColor: 'none'}} digitTxtStyle={{color: 'white'}}   until={timer} showSeparator={false}   timeLabels={{m: null, s: null}} timeToShow={['M', 'S']} onFinish={() => navigation.goBack()}/></LockTxt>
+            <LockTxt style={{ fontSize: 25 }}>
+              <CountDown
+                id={`${id}`}
+                digitStyle={{ backgroundColor: "none" }}
+                digitTxtStyle={{ color: "white" }}
+                until={timer}
+                showSeparator={false}
+                timeLabels={{ m: null, s: null }}
+                timeToShow={["M", "S"]}
+                onFinish={() => navigation.goBack()}
+              />
+            </LockTxt>
             <ResetButton onPress={() => _handleResetPress()}>
               <LockTxt>Reset</LockTxt>
             </ResetButton>
@@ -295,7 +307,6 @@ function UploadedScreen({ route, navigation, darkMode }) {
                   ) : (
                     uploadedFiles &&
                     uploadedFiles.map((val, i) => {
-                 
                       return (
                         <View style={styles.gridCard} key={i}>
                           <TouchableOpacity
@@ -306,7 +317,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
                           >
                             <Image
                               source={{
-                                uri: `${BASE_URL}data/image?key=${val.fileName}&client_secret=${secret}&server_secret=${serverSecret}`
+                                uri: `${BASE_URL}data/image?key=${val.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
                               }}
                               style={{
                                 width: "100%",
@@ -352,8 +363,15 @@ function UploadedScreen({ route, navigation, darkMode }) {
               visible={visible}
               FooterComponent={() => (
                 <ImageViewFooter>
-                  
-                  <TouchableOpacity activeOpacity={0.7} onPress={async()=>{downloadImageLocally(`${BASE_URL}data/image?key=${data.fileName}&client_secret=${secret}&server_secret=${serverSecret}`, data)}}>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={async () => {
+                      downloadImageLocally(
+                        `${BASE_URL}data/image?key=${data.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
+                        data
+                      );
+                    }}
+                  >
                     <AntDesign name="download" size={24} color="#1D2026" />
                   </TouchableOpacity>
                   <Tag>
@@ -362,8 +380,10 @@ function UploadedScreen({ route, navigation, darkMode }) {
                     </Text>
                   </Tag>
                   {/* Modal for Adding Tag */}
-      
-                  <TouchableOpacity onPress={()=>setShowModal(true)}><OptionIcon name="dots-three-horizontal" /></TouchableOpacity>
+
+                  <TouchableOpacity onPress={() => setShowModal(true)}>
+                    <OptionIcon name="dots-three-horizontal" />
+                  </TouchableOpacity>
                   <TouchableOpacity activeOpacity={0.6}>
                     <AntDesign name="delete" size={24} color="#1D2026" />
                   </TouchableOpacity>
@@ -373,58 +393,70 @@ function UploadedScreen({ route, navigation, darkMode }) {
             />
           </ScrollView>
           <Modal
-        isVisible={showModal}
-        onBackButtonPress={() => setShowModal(false)}
-        onBackdropPress={() => setShowModal(false)}
-      >
-        <ModalContainer>
-          <ModalContent>
-            <TouchableOpacity
-              activeOpacity={0.6}
-              style={{
-                alignSelf: "flex-end",
-                width: 25,
-                height: 25,
-                backgroundColor: "#FF2465",
-                borderRadius: 25,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              onPress={() => setShowModal(false)}
-            >
-              <AntDesign name="close" size={15} color="white" />
-            </TouchableOpacity>
-            <TextInput
-              placeholder="Enter a new tag..."
-              color="white"
-              onChangeText={(text)=>{SetTag(text)}}
-              placeholderTextColor="white"
-              style={styles.input}
-            />
+            isVisible={showModal}
+            onBackButtonPress={() => setShowModal(false)}
+            onBackdropPress={() => setShowModal(false)}
+          >
+            <ModalContainer>
+              <ModalContent>
+                <TouchableOpacity
+                  activeOpacity={0.6}
+                  style={{
+                    alignSelf: "flex-end",
+                    width: 25,
+                    height: 25,
+                    backgroundColor: "#FF2465",
+                    borderRadius: 25,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onPress={() => setShowModal(false)}
+                >
+                  <AntDesign name="close" size={15} color="white" />
+                </TouchableOpacity>
+                <TextInput
+                  placeholder="Enter a new tag..."
+                  color="white"
+                  onChangeText={(text) => {
+                    SetTag(text);
+                  }}
+                  placeholderTextColor="white"
+                  style={styles.input}
+                />
 
-            <View style={styles.modalTagView}>
-              
-              <TouchableOpacity onPress={async()=>{ RenameTag(data)}} style={{backgroundColor: "#FF2465",width: 100,
-                height: 30,
-                color:"white",
-                marginTop: 20,
-                padding: 5,
-                width: 140,
-                backgroundColor: "#FF2465",
-                alignSelf: "flex-start",
-                borderRadius: 100,}}><Text style={{color:"white", textAlign:"center"}}>{renaming?"Please wait...":"Rename Tag"}</Text></TouchableOpacity>
+                <View style={styles.modalTagView}>
+                  <TouchableOpacity
+                    onPress={async () => {
+                      RenameTag(data);
+                    }}
+                    style={{
+                      backgroundColor: "#FF2465",
+                      width: 100,
+                      height: 30,
+                      color: "white",
+                      marginTop: 20,
+                      padding: 5,
+                      width: 140,
+                      backgroundColor: "#FF2465",
+                      alignSelf: "flex-start",
+                      borderRadius: 100,
+                    }}
+                  >
+                    <Text style={{ color: "white", textAlign: "center" }}>
+                      {renaming ? "Please wait..." : "Rename Tag"}
+                    </Text>
+                  </TouchableOpacity>
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-              </View>
-            </View>
-          </ModalContent>
-        </ModalContainer>
-      </Modal>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  ></View>
+                </View>
+              </ModalContent>
+            </ModalContainer>
+          </Modal>
         </View>
       </MenuContainer>
     </View>
