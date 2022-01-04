@@ -68,9 +68,9 @@ function UploadScreen(props) {
           } else {
             formData.append("file", {
               uri: file.uri,
-              type: "image/jpg",
-              name: "image.jpg",
-              originalname: "image.jpg",
+              type: file.mimeType,
+              name: file.name,
+              originalname: file.name,
             });
           }
           console.log(getStorageClass());

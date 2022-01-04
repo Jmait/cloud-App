@@ -30,6 +30,8 @@ import { apiRequest, BASE_URL } from "../../helpers/constants";
 import CountDown from "react-native-countdown-component";
 import { downloadImageLocally } from "./image-downloader";
 import Modal from "react-native-modal";
+// import VideoPlayer from "react-native-video-player";
+// import { Video } from "expo-av";
 
 function UploadedScreen({ route, navigation, darkMode }) {
   const [view, setView] = React.useState(false);
@@ -328,49 +330,47 @@ function UploadedScreen({ route, navigation, darkMode }) {
                   ) : (
                     uploadedFiles &&
                     uploadedFiles.map((val, i) => {
+                      const content =
+                        val.fileType === "video/mp4" ? (
+                          <Image
+                            source={require("../../assets/video.jpeg")}
+                            style={{
+                              width: "100%",
+                              height: 80,
+                              resizeMode: "stretch",
+                            }}
+                          />
+                        ) : (
+                          // <VideoPlayer
+                          //   video={{
+                          //     uri: `${BASE_URL}data/image?key=${val.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
+                          //   }}
+                          //   autoplay={false}
+                          //   defaultMuted={true}
+                          //   videoWidth={100}
+                          //   videoHeight={80}
+                          //   thumbnail={require("../../assets/video.jpeg")}
+                          // />
+                          <Image
+                            source={require("../../assets/image.jpeg")}
+                            style={{
+                              width: "100%",
+                              height: 80,
+                              resizeMode: "stretch",
+                            }}
+                          />
+                        );
                       return (
                         <View style={styles.gridCard} key={i}>
-                          {isLoading ? (
-                            <Image
-                              source={require("../../assets/image.jpeg")}
-                              style={{
-                                width: "100%",
-                                height: 80,
-                                resizeMode: "stretch",
-                              }}
-                            />
-                          ) : (
-                            <TouchableOpacity
-                              onPress={() => {
-                                setIsVisible(!visible);
-                                setData(val);
-                              }}
-                            >
-                              {/* Check for image types and render them */}
-                              <View>
-                                {val.fileType === "image/jpg" ? (
-                                  <Image
-                                    source={{
-                                      uri: `${BASE_URL}data/image?key=${val.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
-                                    }}
-                                    style={{
-                                      width: "100%",
-                                      height: 80,
-                                      resizeMode: "stretch",
-                                    }}
-                                  />
-                                ) : (
-                                  <Image
-                                    source={require("../../assets/image.jpeg")}
-                                    style={{
-                                      width: "100%",
-                                      height: 80,
-                                      resizeMode: "stretch",
-                                    }}
-                                  />
-                                )}
-                              </View>
-                              <View>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setIsVisible(!visible);
+                              setData(val);
+                            }}
+                          >
+                            {/* Check for image types and render them */}
+                            <View>{content}</View>
+                            {/* <View>
                                 {val.fileType === "image/png" ? (
                                   <Image
                                     source={require("../../assets/image.jpeg")}
@@ -381,8 +381,8 @@ function UploadedScreen({ route, navigation, darkMode }) {
                                     }}
                                   />
                                 ) : null}
-                              </View>
-                              <View>
+                              </View> */}
+                            {/* <View>
                                 {val.fileType === "image/gif" ? (
                                   <Image
                                     source={require("../../assets/image.jpeg")}
@@ -393,10 +393,10 @@ function UploadedScreen({ route, navigation, darkMode }) {
                                     }}
                                   />
                                 ) : null}
-                              </View>
+                              </View> */}
 
-                              {/* Check for the audio and render */}
-                              <View>
+                            {/* Check for the audio and render */}
+                            {/* <View>
                                 {val.fileType === "audio/mp3" ? (
                                   <Image
                                     source={require("../../assets/audio.jpeg")}
@@ -407,11 +407,11 @@ function UploadedScreen({ route, navigation, darkMode }) {
                                     }}
                                   />
                                 ) : null}
-                              </View>
+                              </View> */}
 
-                              {/* Check for the video and render */}
-                              <View>
-                                {val.fileType === "video/mp4" ? (
+                            {/* Check for the video and render */}
+                            {/* <View>
+                                {val.fileType === "image/jpg" ? (
                                   <Image
                                     source={require("../../assets/video.jpeg")}
                                     style={{
@@ -421,38 +421,27 @@ function UploadedScreen({ route, navigation, darkMode }) {
                                     }}
                                   />
                                 ) : null}
-                              </View>
+                              </View> */}
 
-                              {/* <Image
-                      source={{
-                        uri: `${BASE_URL}data/image?key=${val.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
-                      }}
-                      style={{
-                        width: "100%",
-                        height: 80,
-                        resizeMode: "stretch",
-                      }}
-                    /> */}
+                            <Text
+                              style={{
+                                ...styles.description,
+                                color: darkMode ? "white" : "#1D2026",
+                              }}
+                            >
+                              {val.fileName}
+                            </Text>
+                            <LockButton style={{ width: 90 }}>
                               <Text
-                                style={{
-                                  ...styles.description,
-                                  color: darkMode ? "white" : "#1D2026",
-                                }}
+                                style={[
+                                  styles.description,
+                                  { fontSize: 13, color: "white" },
+                                ]}
                               >
-                                {val.fileName}
+                                #{val.tag}
                               </Text>
-                              <LockButton style={{ width: 90 }}>
-                                <Text
-                                  style={[
-                                    styles.description,
-                                    { fontSize: 13, color: "white" },
-                                  ]}
-                                >
-                                  #{val.tag}
-                                </Text>
-                              </LockButton>
-                            </TouchableOpacity>
-                          )}
+                            </LockButton>
+                          </TouchableOpacity>
                         </View>
                       );
                     })
@@ -460,6 +449,17 @@ function UploadedScreen({ route, navigation, darkMode }) {
                 </View>
               )}
             </View>
+
+            {/* <Video
+              ref={video}
+              source={{
+                uri: `${BASE_URL}data/image?key=${data.fileName}&client_secret=${secret}&server_secret=${serverSecret}`,
+              }}
+              useNativeControls
+              resizeMode="contain"
+              isLooping
+              onPlaybackStatusUpdate={(data = setData(() => data))}
+            /> */}
 
             <ImageView
               backgroundColor="rgba(0,0,0,0.4)"

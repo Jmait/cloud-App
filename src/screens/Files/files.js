@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   ScrollView,
   View,
@@ -224,9 +224,9 @@ function HomeScreen(props) {
               onPress={() => {
                 setOpen(true);
                 setTimeout(() => {
-                  navigation.navigate(info.title, { name: info.key });
                   setOpen(false);
-                }, 2500);
+                  navigation.navigate(info.title, { name: info.key });
+                }, 1000);
               }}
             >
               <Text style={[styles.text, { color: theme.PRIMARY_TEXT_COLOR }]}>
@@ -238,10 +238,10 @@ function HomeScreen(props) {
               <Image
                 source={require("./../../assets/load.gif")}
                 style={{
-                  width: 200,
-                  height: 200,
+                  width: 150,
+                  height: 150,
                   resizeMode: "stretch",
-                  marginBottom: 200,
+                  marginBottom: 300,
                   position: "absolute",
                 }}
               />
