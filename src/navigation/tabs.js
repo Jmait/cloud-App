@@ -36,6 +36,7 @@ import {
   Signup,
 } from "../screens";
 import Plus from "../screens/MainPlus/Plus";
+import ViewFile from "../screens/viewFile/ViewFile";
 const TabBarHomeBtn = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
@@ -301,6 +302,14 @@ const AppStack = ({ theme, getInitialTheme }) => {
             headerShown: false,
           }}
           component={Frequent}
+        />
+
+        <Stack.Screen
+          name="ViewFile"
+          options={{
+            headerShown: false,
+          }}
+          component={ViewFile}
         />
         {/* <Stack.Screen
           name="Infrequents"

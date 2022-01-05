@@ -30,6 +30,7 @@ import { apiRequest, BASE_URL } from "../../helpers/constants";
 import CountDown from "react-native-countdown-component";
 import { downloadImageLocally } from "./image-downloader";
 import Modal from "react-native-modal";
+import ViewFile from "../viewFile/ViewFile";
 // import VideoPlayer from "react-native-video-player";
 // import { Video } from "expo-av";
 
@@ -364,7 +365,13 @@ function UploadedScreen({ route, navigation, darkMode }) {
                         <View style={styles.gridCard} key={i}>
                           <TouchableOpacity
                             onPress={() => {
-                              setIsVisible(!visible);
+                              navigation.navigate("ViewFile", {
+                                data: val,
+                                baseUrl: BASE_URL,
+                                secretCode: secret,
+                                serverSecret: serverSecret,
+                              });
+                              // setIsVisible(!visible);
                               setData(val);
                             }}
                           >
@@ -460,6 +467,16 @@ function UploadedScreen({ route, navigation, darkMode }) {
               isLooping
               onPlaybackStatusUpdate={(data = setData(() => data))}
             /> */}
+
+            {/* {visible ? (
+              <ViewFile
+                visible={visible}
+                baseUrl={BASE_URL}
+                data={data}
+                secretCode={secret}
+                server={serverSecret}
+              />
+            ) : null} */}
 
             <ImageView
               backgroundColor="rgba(0,0,0,0.4)"
