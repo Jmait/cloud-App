@@ -18,12 +18,12 @@ function ViewFile({ navigation, route }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <EvilIcons
+        {/* <EvilIcons
           name="close"
           size={24}
           style={styles.icon}
           onPress={() => navigation.goBack()}
-        />
+        /> */}
       </View>
 
       <View style={styles.imgContainer}>
@@ -59,13 +59,16 @@ function ViewFile({ navigation, route }) {
           //   );
           // }}
         >
-          <AntDesign name="download" size={24} color="#1D2026" />
+          <AntDesign name="clouddownload" size={45} color="#fff" />
         </TouchableOpacity>
         <TouchableOpacity>
-          <Entypo name="dots-three-horizontal" size={24} color="#1D2026" />
+          <Text style={styles.tag}>#{data.tag}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Entypo name="dots-three-horizontal" size={45} color="#fff" />
         </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.6}>
-          <AntDesign name="delete" size={24} color="#1D2026" />
+          <MaterialIcons name="delete" size={40} color="#fff" />
         </TouchableOpacity>
       </View>
     </View>
@@ -78,6 +81,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: "100%",
+    backgroundColor: "#000",
   },
   header: {
     justifyContent: "center",
@@ -104,10 +108,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginHorizontal: "5%",
-    backgroundColor: "#fff",
-    paddingHorizontal: 25,
+    backgroundColor: "#1d2026",
+    paddingHorizontal: 30,
     paddingTop: 10,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
+  },
+  tag: {
+    backgroundColor: "#FF2465",
+    color: "#fff",
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 7,
   },
 });

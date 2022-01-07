@@ -478,7 +478,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
               />
             ) : null} */}
 
-            <ImageView
+            {/* <ImageView
               backgroundColor="rgba(0,0,0,0.4)"
               images={[
                 {
@@ -505,7 +505,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
                       #{data.tag}
                     </Text>
                   </Tag>
-                  {/* Modal for Adding Tag */}
+                  Modal for Adding Tag
 
                   <TouchableOpacity onPress={() => setShowModal(true)}>
                     <OptionIcon name="dots-three-horizontal" />
@@ -516,7 +516,7 @@ function UploadedScreen({ route, navigation, darkMode }) {
                 </ImageViewFooter>
               )}
               onRequestClose={() => setIsVisible(false)}
-            />
+            /> */}
           </ScrollView>
           {/* )} */}
 
