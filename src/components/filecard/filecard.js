@@ -187,10 +187,9 @@ function HomeCard(props) {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "frequent", title: "Haven Vault" },
-    { key: "infrequent", title: "Free Plan" },
+    { key: "1", title: "Haven Vault" },
+    { key: "2", title: "Free Plan" },
   ]);
-
   // const renderScene = SceneMap({
   //   frequent: Frequent,
   //   infrequent: Infrequent,
@@ -225,11 +224,11 @@ function HomeCard(props) {
               }
             }}
             {...props}
-            renderLabel={({ route, focused, color }) => (
+            renderLabel={({ route }) => (
               <TouchableOpacity activeOpacity={0.9}>
                 <Text
                   style={{
-                    color: focused ? "#FF2465" : "grey",
+                    color: route.key === "1" ? "#FF2465" : "grey",
                     marginTop: 7,
                     fontSize: 16,
                     fontFamily: "HelveticaBold",
