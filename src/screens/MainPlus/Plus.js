@@ -211,14 +211,14 @@ function HomeScreen(props) {
   //   }, [])
   // );
 
-  React.useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      setSelectPkg(!selectPkg);
-    });
+  // React.useEffect(() => {
+  const unsubscribe = navigation.addListener("focus", () => {
+    showUploadSection(!uploadSection);
+  });
 
-    // Return the function to unsubscribe from the event so it gets removed on unmount
-    return unsubscribe;
-  }, [navigation]);
+  // Return the function to unsubscribe from the event so it gets removed on unmount
+  //   return unsubscribe;
+  // }, [navigation]);
   // ******************* TESTNG WIDGET *************
 
   const onSwipe = (direction, state) => {
@@ -265,7 +265,7 @@ function HomeScreen(props) {
             Errors={widgetErrors}
             Styles={widgetStyles}
             Navigator={widgetNavigator}
-          // Resize={widgetResize} know how to use first , perform slower results.
+            // Resize={widgetResize} know how to use first , perform slower results.
           />
         </View>
       </Modal>
@@ -388,7 +388,18 @@ function HomeScreen(props) {
             <TouchableOpacity
               style={styles.pkgButton}
               onPress={() => {
-                Alert.alert("Tier Selected", `You have selected ${pkg} has your preferred tier. Please choose file to proceed`, [{ text: "Confirm", onPress: () => { showUploadSection(!uploadSection); } }])
+                Alert.alert(
+                  "Tier Selected",
+                  `You have selected ${pkg} has your preferred tier. Please choose file to proceed`,
+                  [
+                    {
+                      text: "Confirm",
+                      onPress: () => {
+                        showUploadSection(!uploadSection);
+                      },
+                    },
+                  ]
+                );
                 setSelectPkg(!selectPkg);
               }}
               activeOpacity={0.7}

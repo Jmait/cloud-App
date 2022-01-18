@@ -29,9 +29,8 @@ function UploadCard(props) {
   console.log(props.files);
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "frequent", title: "Frequent" },
-    { key: "infrequent", title: "Infrequent" },
-    { key: "archived", title: "Archived" },
+    { key: "1", title: "Haven Vault" },
+    { key: "2", title: "Free Plan" },
   ]);
 
   const renderScene = ({ route }) => {
@@ -62,11 +61,11 @@ function UploadCard(props) {
               }
             }}
             {...props}
-            renderLabel={({ route, focused, color }) => (
+            renderLabel={({ route }) => (
               <TouchableOpacity activeOpacity={0.9}>
                 <Text
                   style={{
-                    color: focused ? "#FF2465" : "grey",
+                    color: route.key === "1" ? "#FF2465" : "grey",
                     fontWeight: "bold",
                     marginTop: 7,
                     fontSize: 16,
